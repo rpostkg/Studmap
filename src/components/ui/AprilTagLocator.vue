@@ -40,6 +40,8 @@ const addLog = (msg: string) => {
 let worker: Worker | null = null;
 let apriltag: any = null;
 let animationId: number | null = null;
+let closeTimeout: number | null = null;
+let bannerTimeout: number | null = null;
 
 const initCamera = async () => {
   addLog('Initializing camera...');
@@ -71,7 +73,7 @@ const initCamera = async () => {
 };
 
 const processFrame = async () => {
-  if (!video.value || !canvas.value || !apriltag || matchFound.value) return;
+  if (!video.value || !canvas.value || !apriltag) return;
 
   const ctx = canvas.value.getContext('2d');
   if (!ctx) return;
@@ -85,69 +87,58 @@ const processFrame = async () => {
     return;
   }
 
-  // Draw video frame to canvas
+  // Draw video frame to canvas - keeps feed live even after match
   ctx.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height);
   
+  // Always detect to handle transient visibility
   // Get grayscale pixels
   const imageData = ctx.getImageData(0, 0, canvas.value.width, canvas.value.height);
   const pixels = imageData.data;
   const grayscale = new Uint8Array(canvas.value.width * canvas.value.height);
   
-  let sum = 0;
   for (let i = 0, j = 0; i < pixels.length; i += 4, j++) {
-    // Reference uses simple average: (r+g+b)/3
     const avg = Math.round(((pixels[i] ?? 0) + (pixels[i+1] ?? 0) + (pixels[i+2] ?? 0)) / 3);
     grayscale[j] = avg;
-    sum += avg;
   }
 
-  if (showDebug.value && Math.random() < 0.01) {
-    const samples = Array.from(grayscale.slice(0, 10)).join(', ');
-    addLog(`Frame sum: ${sum}, Samples: ${samples}`);
-  }
-  
-  const startTime = performance.now();
   try {
     const detections = await apriltag.detect(grayscale, canvas.value.width, canvas.value.height);
     detectionCount.value = detections.length;
     
-    if (detections.length > 0) {
-      addLog(`Detected ${detections.length} tags: ${detections.map((d:any) => d.id).join(', ')}`);
+    const targetId = props.roomId.replace(/\D/g, '');
+    const foundMatch = detections.find((d: any) => String(d.id) === targetId);
+
+    if (foundMatch) {
+      if (!matchFound.value) {
+        matchFound.value = true;
+        addLog(`Located: ${props.roomName}`);
+      }
+      // Clear any pending hide timer
+      if (bannerTimeout) {
+        window.clearTimeout(bannerTimeout);
+        bannerTimeout = null;
+      }
+    } else if (matchFound.value && !bannerTimeout) {
+      // Tag lost, start grace period
+      bannerTimeout = window.setTimeout(() => {
+        matchFound.value = false;
+        bannerTimeout = null;
+      }, 500);
     }
 
+    // FPS tracking
     const endTime = performance.now();
     if (lastFrameTime.value > 0) {
       const delta = endTime - lastFrameTime.value;
       if (delta > 0) fps.value = Math.round(1000 / delta);
     }
     lastFrameTime.value = endTime;
-
-    // Draw detections
-    detections.forEach((det: any) => {
-      const targetId = props.roomId.replace(/\D/g, '');
-      const isMatch = String(det.id) === targetId;
-      if (isMatch) matchFound.value = true;
-
-      ctx.beginPath();
-      ctx.lineWidth = 4;
-      ctx.strokeStyle = isMatch ? '#22c55e' : '#3b82f6';
-      if (det.corners && det.corners.length >= 4) {
-        ctx.moveTo(det.corners[0].x, det.corners[0].y);
-        ctx.lineTo(det.corners[1].x, det.corners[1].y);
-        ctx.lineTo(det.corners[2].x, det.corners[2].y);
-        ctx.lineTo(det.corners[3].x, det.corners[3].y);
-        ctx.closePath();
-        ctx.stroke();
-      }
-    });
-
-    if (!matchFound.value) {
-      animationId = requestAnimationFrame(processFrame);
-    }
   } catch (err: any) {
     addLog(`Detection Error: ${err.message}`);
-    if (!matchFound.value) animationId = requestAnimationFrame(processFrame);
   }
+
+  // Always schedule next frame to keep camera live
+  animationId = requestAnimationFrame(processFrame);
 };
 
 const runTest = async () => {
@@ -233,6 +224,8 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (animationId) cancelAnimationFrame(animationId);
+  if (closeTimeout) window.clearTimeout(closeTimeout);
+  if (bannerTimeout) window.clearTimeout(bannerTimeout);
   if (video.value && video.value.srcObject) {
     const stream = video.value.srcObject as MediaStream;
     stream.getTracks().forEach(track => track.stop());
@@ -263,7 +256,7 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <div class="hud-overlay" v-if="!isLoading && !error && !matchFound">
+      <div class="hud-overlay" v-if="showDebug && !isLoading && !error && !matchFound">
         <div class="test-results-box" v-if="testResult">
           <h3>Test Output</h3>
           <p>{{ testResult }}</p>
@@ -305,13 +298,11 @@ onUnmounted(() => {
         <button @click="emit('close')" class="retry-btn">Close</button>
       </div>
 
-      <Transition name="fade">
-        <div v-if="matchFound" class="match-overlay">
-          <div class="match-card">
-            <div class="success-icon">✓</div>
-            <h2>Success!</h2>
-            <p>You are looking at <strong>{{ roomName }}</strong></p>
-            <button @click="emit('close')" class="done-btn">Done</button>
+      <Transition name="slide-up">
+        <div v-if="matchFound" class="success-banner">
+          <div class="banner-content">
+            <div class="success-dot"></div>
+            <span>Located: <strong>{{ roomName }}</strong></span>
           </div>
         </div>
       </Transition>
@@ -335,6 +326,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   color: white;
+  pointer-events: auto;
 }
 
 .locator-header {
@@ -565,61 +557,50 @@ onUnmounted(() => {
   to { transform: rotate(360deg); }
 }
 
-.match-overlay {
+.success-banner {
   position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(4px);
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 1.2rem 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(34, 197, 94, 0.4);
+  z-index: 50;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.banner-content {
   display: flex;
   align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  z-index: 20;
+  gap: 0.75rem;
+  color: white;
+  font-size: 1.25rem;
+  white-space: nowrap;
 }
 
-.match-card {
-  background: white;
-  color: black;
-  padding: 2rem;
-  border-radius: 1.5rem;
-  text-align: center;
-  width: 100%;
-  max-width: 320px;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.success-icon {
-  width: 64px;
-  height: 64px;
+.success-dot {
+  width: 8px;
+  height: 8px;
   background: #22c55e;
-  color: white;
   border-radius: 50%;
-  font-size: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1.5rem;
+  box-shadow: 0 0 8px #22c55e;
 }
 
-.match-card h2 {
-  margin: 0 0 0.5rem;
-  font-size: 1.5rem;
+.slide-up-enter-active,
+.slide-up-leave-active {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.match-card p {
-  margin: 0 0 2rem;
-  color: #64748b;
+.slide-up-enter-from {
+  opacity: 0;
+  transform: translate(-50%, -40%);
 }
 
-.done-btn {
-  width: 100%;
-  background: #0f172a;
-  color: white;
-  border: none;
-  padding: 1rem;
-  border-radius: 1rem;
-  font-weight: 600;
-  cursor: pointer;
+.slide-up-leave-to {
+  opacity: 0;
+  transform: translate(-50%, -60%);
 }
 
 .locator-footer {
