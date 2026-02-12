@@ -4,7 +4,7 @@ import * as Comlink from 'comlink';
 import { X, Camera } from 'lucide-vue-next';
 
 const props = defineProps<{
-  roomId: string; // The ID we are looking for (numeric)
+  roomId: string; // 36h11 has more than enough IDs for every room in the college. Besides the rooms use pure numbers and don't exceed 586 in total.
   roomName: string;
 }>();
 
@@ -240,7 +240,7 @@ onUnmounted(() => {
       <button @click="emit('close')" class="close-btn">
         <X />
       </button>
-      <div class="header-text">
+      <div class="header-text" @click="showDebug = !showDebug">
         <h3>Locating {{ roomName }}</h3>
         <p v-if="!matchFound">Scan the AprilTag for ID {{ roomId.replace(/\D/g, '') }}</p>
       </div>
@@ -250,7 +250,7 @@ onUnmounted(() => {
       <video ref="video" autoplay playsinline muted class="hidden-video"></video>
       <canvas ref="canvas" class="detection-canvas"></canvas>
       
-      <div class="log-overlay" v-if="!isLoading && !error">
+      <div class="log-overlay" v-if="showDebug && !isLoading && !error"> // yadda yadda overlay log shall be toggled through this statement
         <div v-for="(log, i) in debugLogs.slice(0, 5)" :key="i" class="overlay-log-line">
           {{ log }}
         </div>
