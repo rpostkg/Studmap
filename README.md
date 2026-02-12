@@ -40,3 +40,11 @@ npm run dev
 ```sh
 npm run build
 ```
+
+### LICENSE
+
+Don't really care, not like this project's gonna be maintained, so, [MIT License](LICENSE). I am ***pretty*** sure it is compatible with the BSD 3-Clause License but don't quote me on that.
+
+#### Third-Party Attribution
+
+Part of this project utilizes components from [apriltag-js-standalone](https://github.com/arenaxr/apriltag-js-standalone), which is licensed under the BSD 3-Clause License. Portions of the WASM and glue code are derived from that project.
