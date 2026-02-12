@@ -9,6 +9,7 @@ export interface Room {
     height: number;
     hasPanorama?: boolean;
     panoramaUrl?: string;
+    hasTag?: boolean;
 }
 
 export interface Floor {
@@ -20,7 +21,7 @@ export const buildingData: Floor[] = [
     {
         level: 1,
         rooms: [
-            { id: '101', name: '101', type: 'room', width: 2, height: 1, x: 1, y: 1, hasPanorama: true, panoramaUrl: '/panoramas/101/pano.jpg' },
+            { id: '101', name: '101', type: 'room', width: 2, height: 1, x: 1, y: 1, hasPanorama: true, panoramaUrl: '/panoramas/101/pano.jpg', hasTag: true },
             { id: '102', name: '102', type: 'room', width: 2, height: 1, x: 3, y: 1 },
             { id: '103', name: '103', type: 'room', width: 2, height: 1, x: 5, y: 1 },
             { id: '104', name: '104', type: 'room', width: 2, height: 1, x: 7, y: 1 },
@@ -48,13 +49,13 @@ export const buildingData: Floor[] = [
             { id: '329', name: '329', type: 'room', width: 2, height: 2, x: 1, y: 15 },
             { id: '331', name: '331', type: 'room', width: 2, height: 3, x: 1, y: 17 },
             //Left side
-            { id: '312', name: '312', type: 'room', width: 2, height: 3, x: -2, y: 0, hasPanorama: true, panoramaUrl: '/panoramas/312/pano.jpg' },
+            { id: '312', name: '312', type: 'room', width: 2, height: 3, x: -2, y: 0, hasTag: true, hasPanorama: true, panoramaUrl: '/panoramas/312/pano.jpg' },
             { id: '314', name: '314', type: 'room', width: 2, height: 2.5, x: -2, y: 3 },
             { id: '316', name: '316', type: 'room', width: 2, height: 3, x: -2, y: 5.5 },
             { id: '319', name: '319', type: 'room', width: 2, height: 2.5, x: -2, y: 8.5 },
             { id: '320', name: '320', type: 'room', width: 2, height: 3, x: -2, y: 11 },
             { id: '322', name: '322', type: 'room', width: 2, height: 3, x: -2, y: 14 },
-            { id: '324', name: '324', type: 'room', width: 2, height: 3, x: -2, y: 17 },
+            { id: '324', name: '324', type: 'room', width: 2, height: 3, x: -2, y: 17, hasTag: true },
         ]
     },
     {

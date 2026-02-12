@@ -29,9 +29,15 @@ export default defineConfig({
             type: 'image/png'
           }
         ]
+      },
+      workbox: {
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024 // Increase limit to 4MiB for AprilTag WASM
       }
     })
   ],
+  server: {
+    allowedHosts: true
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

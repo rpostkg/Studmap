@@ -4,6 +4,7 @@ import { type Room } from '../../data/building';
 import { useFavoritesStore } from '../../stores/favorites';
 import { X, Heart, MapPin, Video } from 'lucide-vue-next';
 import PanoramaViewer from './PanoramaViewer.vue';
+import AprilTagLocator from './AprilTagLocator.vue';
 
 
 const props = defineProps<{
@@ -16,17 +17,20 @@ const emit = defineEmits<{
 }>();
 
 const showPanorama = ref(false);
+const showLocator = ref(false);
 
 const favoritesStore = useFavoritesStore();
 
 watch(() => props.isOpen, (newVal) => {
   if (!newVal) {
     showPanorama.value = false;
+    showLocator.value = false;
   }
 });
 
 watch(() => props.room?.id, () => {
   showPanorama.value = false;
+  showLocator.value = false;
 });
 
 const isFavorite = computed(() => {
@@ -79,9 +83,10 @@ const toggleFavorite = () => {
             </button>
 
             <button 
-                class="action-btn disabled"
-                disabled
-                title="AprilTag integration paused"
+                class="action-btn"
+                :disabled="!room.hasTag"
+                :class="{ 'disabled': !room.hasTag }"
+                @click="showLocator = true"
             >
                 <MapPin class="action-icon"/>
                 <span class="action-label">Locate</span>
@@ -100,6 +105,16 @@ const toggleFavorite = () => {
             :url="room.panoramaUrl || ''" 
             :roomName="room.name"
             @close="showPanorama = false"
+        />
+    </Transition>
+
+    <!-- AprilTag Locator Overlay -->
+    <Transition name="fade">
+        <AprilTagLocator 
+            v-if="showLocator && room" 
+            :roomId="room.id" 
+            :roomName="room.name"
+            @close="showLocator = false"
         />
     </Transition>
   </div>
