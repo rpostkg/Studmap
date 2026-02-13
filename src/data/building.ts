@@ -21,17 +21,28 @@ export const buildingData: Floor[] = [
     {
         level: 1,
         rooms: [
-            { id: '101', name: '101', type: 'room', width: 2, height: 1, x: 1, y: 1, hasPanorama: true, panoramaUrl: '/panoramas/101/pano.jpg', hasTag: true },
-            { id: '102', name: '102', type: 'room', width: 2, height: 1, x: 3, y: 1 },
-            { id: '103', name: '103', type: 'room', width: 2, height: 1, x: 5, y: 1 },
-            { id: '104', name: '104', type: 'room', width: 2, height: 1, x: 7, y: 1 },
-            { id: '105', name: '105', type: 'room', width: 2, height: 1, x: 9, y: 1 },
-            { id: '106', name: '106', type: 'room', width: 2, height: 1, x: 11, y: 1 },
-            { id: 'c1', name: 'Corridor', type: 'corridor', width: 12, height: 1, x: 1, y: 2 },
-            { id: '107', name: '107', type: 'room', width: 3, height: 1, x: 1, y: 3 },
-            { id: '108', name: '108', type: 'room', width: 3, height: 1, x: 4, y: 3 },
-            { id: '109', name: '109', type: 'auditorium', width: 6, height: 1, x: 7, y: 3 },
-            { id: 's1_up', name: 'Stairs Up', type: 'staircase', width: 1, height: 1, x: 3, y: 2 }
+            { id: 'c3', name: 'Corridor', type: 'corridor', width: 1, height: 20, x: 0, y: 0 },
+            { id: 'floor2_staircase1', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 5 },
+            { id: 'floor2_staircase2', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 14 },
+            // Right side
+            { id: '301', name: '301', type: 'room', width: 2, height: 3, x: 1, y: 0 },
+            { id: '303', name: '303', type: 'room', width: 2, height: 2, x: 1, y: 3 },
+            { id: '305', name: '305', type: 'room', width: 2, height: 2.5, x: 1, y: 6 },
+            { id: '307', name: '307', type: 'room', width: 2, height: 2.5, x: 1, y: 8.5 },
+            { id: '309', name: '309', type: 'room', width: 2, height: 3, x: 1, y: 11 },
+            { id: 'watercloset', name: 'WC', type: 'room', width: 2, height: 1.25, x: 1, y: 15 },
+            { id: 'watercloset', name: 'WC', type: 'room', width: 2, height: 1.25, x: 1, y: 16.25 },
+            { id: 'kitchen', name: 'Kitchen', type: 'room', width: 2, height: 1.15, x: 1, y: 17.5 },
+            { id: 'cafeteria1', name: 'Cafeteria', type: 'room', width: 2, height: 1.35, x: 1, y: 18.65 },
+            //Left side
+            { id: '300', name: '300', type: 'room', width: 2, height: 3, x: -2, y: 0 },
+            { id: '302', name: '302', type: 'room', width: 2, height: 3, x: -2, y: 3 },
+            { id: '304', name: '304', type: 'room', width: 2, height: 3, x: -2, y: 6 },
+            { id: 'entrance', name: 'Entrance', type: 'staircase', width: 2, height: 4, x: -2, y: 9 },
+            { id: '308', name: '308', type: 'room', width: 2, height: 2.5, x: -2, y: 13 },
+            { id: '310', name: '310', type: 'room', width: 2, height: 1, x: -2, y: 15.5 },
+            { id: 'hall', name: 'General Hall', type: 'room', width: 2, height: 2, x: -2, y: 16.5 },
+            { id: 'cafeteria2', name: 'Cafeteria', type: 'room', width: 2, height: 1.5, x: -2, y: 18.5 },
         ]
     },
     {
