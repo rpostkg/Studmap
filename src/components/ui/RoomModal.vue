@@ -12,7 +12,7 @@ import {
 import { type Room, buildingData } from '../../data/building';
 import { useBookmarksStore } from '../../stores/bookmarks';
 import { useI18nStore } from '../../stores/i18n';
-import { X, Heart, MapPin, Video, Map } from 'lucide-vue-next';
+import { X, Bookmark, MapPin, Video, Map } from 'lucide-vue-next';
 import PanoramaViewer from './PanoramaViewer.vue';
 import AprilTagLocator from './AprilTagLocator.vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -96,7 +96,7 @@ const navigateToFloor = () => {
               :class="{ 'is-active': isBookmarked }"
               @click="toggleBookmark"
             >
-              <Heart class="action-icon" :class="{ 'fill-icon': isBookmarked }"/>
+              <Bookmark class="action-icon" :class="{ 'fill-icon': isBookmarked }"/>
               <span class="action-label">{{ isBookmarked ? i18n.t('ui.saved') : i18n.t('ui.save') }}</span>
             </button>
 
