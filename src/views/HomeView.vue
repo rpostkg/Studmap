@@ -30,7 +30,8 @@ const floorsForDisplay = buildingData.slice().reverse();
                 @click="navigateToFloor(floor.level)"
                 class="floor-plate"
                 :style="{ 
-                    transform: `rotateX(60deg) rotateZ(45deg) translateY(${index * 40}px) translateZ(${-index * 20}px)`,
+                    '--z-offset': `${index * 40}px`,
+                    transform: `rotateX(55deg) rotateZ(-45deg) translateZ(calc(${index * 40}px))`,
                     zIndex: floorsForDisplay.length - index
                 }"
             >
@@ -93,27 +94,34 @@ const floorsForDisplay = buildingData.slice().reverse();
 
 .floor-plate {
     position: absolute;
-    width: 10rem;
+    width: 15rem;
     height: 10rem;
     background-color: var(--card);
-    border: 2px solid rgba(15, 23, 42, 0.2);
+    border: 4px solid rgba(15, 23, 42, 0.2);
     cursor: pointer;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     align-items: center;
     justify-content: center;
+    transform-style: preserve-3d;
 }
 
 .floor-plate:hover {
     border-color: #0ea5e9;
     background-color: var(--accent);
-    transform: rotateX(60deg) rotateZ(45deg) translateY(0) translateZ(20px) !important;
+    transform: rotateX(55deg) rotateZ(-45deg) translateZ(calc(var(--z-offset) + 10px)) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
 .floor-content {
-    transform: rotate(-45deg);
+    transform: rotateZ(45deg) rotateX(-55deg);
     text-align: center;
+    transition: transform 0.3s;
+}
+
+.floor-plate:hover .floor-content {
+    transform: rotateZ(45deg) rotateX(-55deg) scale(1.1);
 }
 
 .floor-level {
