@@ -31,7 +31,8 @@ export default defineConfig({
         ]
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024 // Increase limit to 4MiB for AprilTag WASM
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,jpg,jpeg}'],
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 // Increase limit to 5MiB for Panoramas
       }
     })
   ],
