@@ -6,6 +6,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/studmap/',
   plugins: [
     vue(),
     vueDevTools(),
@@ -13,9 +14,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
       manifest: {
-        name: 'College Map',
-        short_name: 'CampusMap',
-        description: 'Virtual Campus Map & Navigation',
+        name: 'Studmap',
+        short_name: 'Studmap',
+        description: 'Navigate the maze that is this college!',
         theme_color: '#ffffff',
         icons: [
           {
@@ -32,7 +33,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json,jpg,jpeg}'],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 // Increase limit to 5MiB for Panoramas
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024 // Panoramas are the only reason why it's up to 5MB now
       }
     })
   ],
