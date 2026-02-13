@@ -75,13 +75,4 @@ export const buildingData: Floor[] = [
             { id: 's3_up', name: 'Stairs Up', type: 'staircase', width: 1, height: 1, x: 8, y: 2 }
         ]
     },
-    {
-        level: 4,
-        rooms: [
-            { id: '401', name: '401', type: 'room', width: 2, height: 1, x: 1, y: 1 },
-            { id: '402', name: '402', type: 'room', width: 2, height: 1, x: 3, y: 1 },
-            { id: 'c4', name: 'Corridor', type: 'corridor', width: 4, height: 12, x: 1, y: 2 },
-            { id: '407', name: '407', type: 'room', width: 1, height: 1, x: 5, y: 2 },
-        ]
-    },
 ];
