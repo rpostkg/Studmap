@@ -23,6 +23,18 @@
     --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .glass {
+    background: rgba(12, 12, 19, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 @media (prefers-color-scheme: dark) {
     :root:not(.light) {
         --background: #08080e;
