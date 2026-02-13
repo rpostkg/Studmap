@@ -330,12 +330,24 @@ const getRoomClass = (room: Room) => {
   cursor: pointer;
   transition: all 0.2s;
 }
+.dark .header-action-btn {
+  background-color: var(--primary-foreground);
+}
 
 .header-action-btn:hover {
+  background-color: #eaf5ff;
+}
+.dark .header-action-btn:hover {
   background-color: var(--muted);
 }
 
 .header-action-btn.is-flipped {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.dark .header-action-btn.is-flipped {
   background-color: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
@@ -346,7 +358,12 @@ const getRoomClass = (room: Room) => {
   height: 1rem;
   transition: transform 0.3s;
 }
-
+.dark .action-icon {
+  color: var(--primary);
+}
+.dark .is-flipped .action-icon {
+  color: var(--secondary);
+}
 .is-flipped .action-icon {
   transform: rotate(180deg);
 }
@@ -354,5 +371,12 @@ const getRoomClass = (room: Room) => {
 .btn-label {
   font-size: 0.75rem;
   font-weight: 500;
+  color: var(--primary);
+}
+
+.is-flipped .btn-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--primary-foreground);
 }
 </style>
