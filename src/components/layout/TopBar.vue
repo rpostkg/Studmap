@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
-import { Search, Settings, Bookmark, X, ChevronRight } from 'lucide-vue-next';
+import { Search, Settings, Bookmark, X, ChevronRight, Home } from 'lucide-vue-next';
 import { useI18nStore } from '../../stores/i18n';
+import { useRouter } from 'vue-router';
 import { buildingData, type Room } from '../../data/building';
 
 const emit = defineEmits<{
@@ -10,6 +11,7 @@ const emit = defineEmits<{
   (e: 'select-room', room: Room & { floor: number }): void;
 }>();
 
+const router = useRouter();
 const i18n = useI18nStore();
 const searchQuery = ref('');
 const isSearchFocused = ref(false);
@@ -40,11 +42,18 @@ const handleSelect = (room: Room & { floor: number }) => {
 const clearSearch = () => {
   searchQuery.value = '';
 };
+
+const goHome = () => {
+  router.push('/');
+};
 </script>
 
 <template>
   <header class="top-bar glass">
     <div class="nav-icons">
+      <button class="nav-btn" @click="goHome" :title="i18n.t('ui.home')">
+        <Home class="icon" />
+      </button>
       <button class="nav-btn" @click="emit('open-settings')" :title="i18n.t('ui.settings')">
         <Settings class="icon" />
       </button>
