@@ -183,6 +183,9 @@ const goHome = () => {
   transition: all 0.2s;
   outline: none;
 }
+.dark .search-input {
+  color: var(--foreground);
+}
 
 .is-focused .search-input {
   border-color: var(--primary);
