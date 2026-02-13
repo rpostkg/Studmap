@@ -4,7 +4,8 @@
         "home": "Home",
         "bookmarks": "Bookmarks",
         "settings": "Settings",
-        "search_placeholder": "Search room (e.g. 101, Lab)",
+        "settings_subtitle": "Various app settings.",
+        "search_placeholder": "Search room (e.g. 321 / Comp)",
         "no_rooms_found": "No rooms found.",
         "level": "Level",
         "floor": "Floor",
@@ -17,6 +18,8 @@
         "saved": "Saved",
         "view_360": "View 360",
         "locate": "Locate",
+        "located": "Located",
+        "you_are_looking_at": "You are looking at",
         "tap_backdrop_to_close": "Tap backdrop to close",
         "flip_view": "Flip View 180°",
         "flip": "Flip",
@@ -42,12 +45,10 @@
         "camera_error_denied": "Camera access denied: {message}"
     },
     "rooms": {
-        "101": "101 (Classroom)",
-        "312": "312 (Server Room)",
-        "324": "324 (Lab)",
-        "s1_up": "Stairs Up",
-        "s3_down": "Stairs Down",
-        "s3_up": "Stairs Up",
+        "316": "316 (Computer Class)",
+        "s1_up": "Stairs",
+        "s3_down": "Stairs",
+        "s3_up": "Stairs",
         "floor2_staircase1": "Stairs",
         "floor2_staircase2": "Stairs"
     }
