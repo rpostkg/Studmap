@@ -254,6 +254,10 @@ const navigateToFloor = () => {
   height: 1.5rem;
 }
 
+.dark .action-icon {
+  color: var(--foreground);
+}
+
 .fill-icon {
   fill: currentColor;
 }
@@ -261,6 +265,10 @@ const navigateToFloor = () => {
 .action-label {
   font-size: 0.75rem;
   font-weight: 600;
+}
+
+.dark .action-label {
+  color: var(--foreground);
 }
 
 .disabled {
