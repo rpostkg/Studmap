@@ -131,7 +131,7 @@ const floorsForDisplay = buildingData.slice().reverse();
 .floor-level {
     font-size: 2.5rem;
     font-weight: 900;
-    color: var(--foreground);
+    color: #9797f9;
 }
 
 .floor-label {
@@ -139,7 +139,7 @@ const floorsForDisplay = buildingData.slice().reverse();
     text-transform: uppercase;
     font-weight: 800;
     letter-spacing: 0.1em;
-    color: var(--muted-foreground);
+    color: #9797f9;
 }
 
 @media (prefers-color-scheme: dark) {
