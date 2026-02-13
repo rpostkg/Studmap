@@ -292,9 +292,9 @@ const getRoomClass = (room: Room) => {
 }
 
 @keyframes pulse-glow {
-  0% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(15, 23, 42, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(15, 23, 42, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(245, 232, 60, 0.65); }
+  50% { box-shadow: 0 0 0 25px rgba(245, 232, 60, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 232, 60, 0); }
 }
 
 .bookmark {
@@ -303,12 +303,6 @@ const getRoomClass = (room: Room) => {
   color: #a16207;
   box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.5);
   z-index: 10;
-}
-
-@media (prefers-color-scheme: dark) {
-  .bookmark {
-    background-color: rgba(234, 179, 8, 0.3);
-  }
 }
 
 .empty-state {
