@@ -30,14 +30,18 @@ const floorsForDisplay = buildingData.slice().reverse();
                 @click="navigateToFloor(floor.level)"
                 class="floor-plate"
                 :style="{ 
-                    '--z-offset': `${index * 40}px`,
-                    transform: `rotateX(55deg) rotateZ(-45deg) translateZ(calc(${index * 40}px))`,
+                    '--z-offset': `${index * -60}px`,
+                    transform: `rotateX(55deg) rotateZ(-45deg) translateZ(calc(${index * -60}px))`,
                     zIndex: floorsForDisplay.length - index
                 }"
             >
-               <div class="floor-content">
+               <div class="floor-content" :style="{ 
+                    transform: 'translate(-8.5rem)'
+                }" >
                  <span class="floor-level">{{ floor.level }}</span>
-                 <div class="floor-label">{{ i18n.t('ui.level') }}</div>
+                 <div class="floor-label" :style="{ 
+                    transform: 'translate(8.5rem, 2rem)'
+                }">{{ i18n.t('ui.level') }}</div>
                </div>
             </div>
         </div>
