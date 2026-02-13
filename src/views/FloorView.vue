@@ -4,6 +4,7 @@ import { buildingData, type Room } from '../data/building';
 import { computed, ref } from 'vue';
 import RoomModal from '../components/ui/RoomModal.vue';
 import { useBookmarksStore } from '../stores/bookmarks';
+import { useModalStore } from '../stores/modal';
 import { useI18nStore } from '../stores/i18n';
 import { RotateCw } from 'lucide-vue-next';
 
@@ -13,10 +14,9 @@ const level = computed(() => parseInt(route.params.level as string));
 const floor = computed(() => buildingData.find(f => f.level === level.value));
 const highlightRoomId = computed(() => route.query.highlight as string);
 
-const selectedRoom = ref<Room | null>(null);
-const isModalOpen = ref(false);
 const isFlipped = ref(false);
 const bookmarksStore = useBookmarksStore();
+const modalStore = useModalStore();
 
 const getRoomName = (room: Room) => {
   const localized = i18n.t(`rooms.${room.id}`);
@@ -25,8 +25,7 @@ const getRoomName = (room: Room) => {
 
 const handleRoomClick = (room: Room) => {
     if (room.type === 'spacer') return;
-    selectedRoom.value = room;
-    isModalOpen.value = true;
+    modalStore.openRoom(room);
 };
 
 // Calculate layout bounds for normalization
@@ -153,11 +152,6 @@ const getRoomClass = (room: Room) => {
         </div>
     </div>
 
-    <RoomModal 
-        :room="selectedRoom" 
-        :is-open="isModalOpen" 
-        @close="isModalOpen = false" 
-    />
   </div>
 </template>
 
@@ -292,9 +286,15 @@ const getRoomClass = (room: Room) => {
   background-color: var(--primary);
   color: var(--primary-foreground) !important;
   border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(15, 23, 42, 0.3);
   z-index: 20;
+  animation: pulse-glow 2s ease-out 3; /* Pulse 3 times */
   transform: scale(1.05);
+}
+
+@keyframes pulse-glow {
+  0% { box-shadow: 0 0 0 0 rgba(245, 232, 60, 0.65); }
+  50% { box-shadow: 0 0 0 25px rgba(245, 232, 60, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(245, 232, 60, 0); }
 }
 
 .bookmark {
@@ -303,12 +303,6 @@ const getRoomClass = (room: Room) => {
   color: #a16207;
   box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.5);
   z-index: 10;
-}
-
-@media (prefers-color-scheme: dark) {
-  .bookmark {
-    background-color: rgba(234, 179, 8, 0.3);
-  }
 }
 
 .empty-state {
@@ -330,12 +324,24 @@ const getRoomClass = (room: Room) => {
   cursor: pointer;
   transition: all 0.2s;
 }
+.dark .header-action-btn {
+  background-color: var(--primary-foreground);
+}
 
 .header-action-btn:hover {
+  background-color: #eaf5ff;
+}
+.dark .header-action-btn:hover {
   background-color: var(--muted);
 }
 
 .header-action-btn.is-flipped {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--primary);
+}
+
+.dark .header-action-btn.is-flipped {
   background-color: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
@@ -346,7 +352,12 @@ const getRoomClass = (room: Room) => {
   height: 1rem;
   transition: transform 0.3s;
 }
-
+.dark .action-icon {
+  color: var(--primary);
+}
+.dark .is-flipped .action-icon {
+  color: var(--secondary);
+}
 .is-flipped .action-icon {
   transform: rotate(180deg);
 }
@@ -354,5 +365,12 @@ const getRoomClass = (room: Room) => {
 .btn-label {
   font-size: 0.75rem;
   font-weight: 500;
+  color: var(--primary);
+}
+
+.is-flipped .btn-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--primary-foreground);
 }
 </style>

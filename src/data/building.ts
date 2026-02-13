@@ -52,7 +52,7 @@ export const buildingData: Floor[] = [
             { id: '312', name: '312', type: 'room', width: 2, height: 3, x: -2, y: 0, hasTag: true, hasPanorama: true, panoramaUrl: '/panoramas/312/pano.jpg' },
             { id: '314', name: '314', type: 'room', width: 2, height: 2.5, x: -2, y: 3 },
             { id: '316', name: '316', type: 'room', width: 2, height: 3, x: -2, y: 5.5 },
-            { id: '319', name: '319', type: 'room', width: 2, height: 2.5, x: -2, y: 8.5 },
+            { id: '318', name: '318', type: 'room', width: 2, height: 2.5, x: -2, y: 8.5 },
             { id: '320', name: '320', type: 'room', width: 2, height: 3, x: -2, y: 11 },
             { id: '322', name: '322', type: 'room', width: 2, height: 3, x: -2, y: 14 },
             { id: '324', name: '324', type: 'room', width: 2, height: 3, x: -2, y: 17, hasTag: true },
@@ -73,15 +73,6 @@ export const buildingData: Floor[] = [
             { id: '209', name: '209', type: 'lab', width: 4, height: 1, x: 9, y: 3 },
             { id: 's3_down', name: 'Stairs Down', type: 'staircase', width: 1, height: 1, x: 3, y: 2 },
             { id: 's3_up', name: 'Stairs Up', type: 'staircase', width: 1, height: 1, x: 8, y: 2 }
-        ]
-    },
-    {
-        level: 4,
-        rooms: [
-            { id: '401', name: '401', type: 'room', width: 2, height: 1, x: 1, y: 1 },
-            { id: '402', name: '402', type: 'room', width: 2, height: 1, x: 3, y: 1 },
-            { id: 'c4', name: 'Corridor', type: 'corridor', width: 4, height: 12, x: 1, y: 2 },
-            { id: '407', name: '407', type: 'room', width: 1, height: 1, x: 5, y: 2 },
         ]
     },
 ];

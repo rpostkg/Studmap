@@ -1,53 +1,39 @@
 <script setup lang="ts">
-import { RouterLink, useRoute } from 'vue-router';
-import { Home, Bookmark, Settings } from 'lucide-vue-next';
-import { useI18nStore } from '../../stores/i18n';
+import { ref } from 'vue';
+import TopBar from './TopBar.vue';
+import SettingsModal from '../ui/SettingsModal.vue';
+import BookmarksModal from '../ui/BookmarksModal.vue';
+import RoomModal from '../ui/RoomModal.vue';
+import { useModalStore } from '../../stores/modal';
 
-const route = useRoute();
-const i18n = useI18nStore();
+const modalStore = useModalStore();
+const isSettingsOpen = ref(false);
+const isBookmarksOpen = ref(false);
 </script>
 
 <template>
   <div class="layout">
-    <!-- Header -->
-    <header class="header">
-      <h1 class="title">{{ i18n.t('ui.app_title') }}</h1>
-    </header>
+    <TopBar 
+      @open-settings="isSettingsOpen = true"
+      @open-bookmarks="isBookmarksOpen = true"
+      @select-room="room => modalStore.openRoom(room)"
+    />
 
-    <!-- Main Content Area -->
     <main class="main">
       <slot></slot>
     </main>
 
-    <!-- Bottom Navigation -->
-    <nav class="nav">
-      <RouterLink 
-        to="/" 
-        class="nav-item"
-        :class="{ 'active': route.name === 'home' }"
-      >
-        <Home class="icon" />
-        <span class="label">{{ i18n.t('ui.home') }}</span>
-      </RouterLink>
-
-      <RouterLink 
-        to="/bookmarks" 
-        class="nav-item"
-        :class="{ 'active': route.name === 'bookmarks' }"
-      >
-        <Bookmark class="icon" />
-        <span class="label">{{ i18n.t('ui.bookmarks') }}</span>
-      </RouterLink>
-
-      <RouterLink 
-        to="/settings" 
-        class="nav-item"
-        :class="{ 'active': route.name === 'settings' }"
-      >
-        <Settings class="icon" />
-        <span class="label">{{ i18n.t('ui.settings') }}</span>
-      </RouterLink>
-    </nav>
+    <!-- Global Modals -->
+    <SettingsModal v-model:open="isSettingsOpen" />
+    <BookmarksModal 
+      v-model:open="isBookmarksOpen" 
+      @select-room="room => modalStore.openRoom(room)"
+    />
+    <RoomModal 
+      :room="modalStore.selectedRoom" 
+      :is-open="modalStore.isRoomModalOpen" 
+      @close="modalStore.closeRoom()"
+    />
   </div>
 </template>
 
@@ -60,74 +46,9 @@ const i18n = useI18nStore();
   color: var(--foreground);
 }
 
-.header {
-  border-bottom: 1px solid var(--border);
-  background-color: var(--card);
-  padding: 1rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-.title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.025em;
-}
-
 .main {
   flex: 1;
   overflow: auto;
-  padding-bottom: 5rem; /* space for nav */
   position: relative;
-}
-
-.nav {
-  border-top: 1px solid var(--border);
-  background-color: var(--card);
-  height: 4rem;
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 20;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  items-center: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--muted-foreground);
-  transition: color 0.2s;
-  text-decoration: none;
-  align-items: center;
-}
-
-.nav-item:hover {
-  color: var(--primary);
-}
-
-.nav-item.active {
-  color: var(--primary);
-}
-
-.icon {
-  width: 1.5rem;
-  height: 1.5rem;
-}
-
-.label {
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
 }
 </style>

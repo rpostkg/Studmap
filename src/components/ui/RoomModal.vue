@@ -1,12 +1,21 @@
 <script setup lang="ts">
-import { computed, watch, ref } from 'vue';
-import { type Room } from '../../data/building';
+import { computed, ref } from 'vue';
+import { 
+  DialogRoot, 
+  DialogPortal, 
+  DialogOverlay, 
+  DialogContent, 
+  DialogTitle, 
+  DialogDescription,
+  DialogClose 
+} from 'radix-vue';
+import { type Room, buildingData } from '../../data/building';
 import { useBookmarksStore } from '../../stores/bookmarks';
 import { useI18nStore } from '../../stores/i18n';
-import { X, Bookmark, MapPin, Video } from 'lucide-vue-next';
+import { X, Bookmark, MapPin, Video, Map } from 'lucide-vue-next';
 import PanoramaViewer from './PanoramaViewer.vue';
 import AprilTagLocator from './AprilTagLocator.vue';
-
+import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps<{
   room: Room | null;
@@ -17,23 +26,12 @@ const emit = defineEmits<{
   (e: 'close'): void;
 }>();
 
+const router = useRouter();
+const route = useRoute();
 const i18n = useI18nStore();
+const bookmarksStore = useBookmarksStore();
 const showPanorama = ref(false);
 const showLocator = ref(false);
-
-const bookmarksStore = useBookmarksStore();
-
-watch(() => props.isOpen, (newVal) => {
-  if (!newVal) {
-    showPanorama.value = false;
-    showLocator.value = false;
-  }
-});
-
-watch(() => props.room?.id, () => {
-  showPanorama.value = false;
-  showLocator.value = false;
-});
 
 const isBookmarked = computed(() => {
   if (!props.room) return false;
@@ -50,169 +48,173 @@ const getRoomName = (room: Room) => {
   const localized = i18n.t(`rooms.${room.id}`);
   return localized !== `rooms.${room.id}` ? localized : room.name;
 };
+
+const roomFloor = computed(() => {
+  if (!props.room) return null;
+  const floor = buildingData.find(f => f.rooms.some(r => r.id === props.room?.id));
+  return floor ? floor.level : null;
+});
+
+const isAlreadyOnThisFloor = computed(() => {
+  if (!roomFloor.value) return false;
+  return route.name === 'floor' && parseInt(route.params.level as string) === roomFloor.value;
+});
+
+const navigateToFloor = () => {
+  if (props.room && roomFloor.value !== null) {
+    router.push({ 
+      name: 'floor', 
+      params: { level: roomFloor.value },
+      query: { highlight: props.room.id }
+    });
+    emit('close');
+  }
+};
 </script>
 
 <template>
-  <div v-if="isOpen && room" class="modal-root">
-    <!-- Backdrop -->
-    <div class="backdrop" @click="emit('close')"></div>
-    
-    <!-- Modal Content -->
-    <div class="modal-content">
-        <div class="modal-header">
+  <DialogRoot :open="isOpen" @update:open="val => !val && emit('close')">
+    <DialogPortal>
+      <DialogOverlay class="modal-overlay" />
+      <DialogContent class="modal-content glass">
+        <template v-if="room">
+          <div class="modal-header">
             <div class="room-info">
-                <h3 class="room-name">{{ getRoomName(room) }}</h3>
-                <p class="room-meta">{{ room.nickname || '' }} | {{ i18n.t('ui.floor') }} {{ room.id.charAt(0) }}</p>
+              <DialogTitle class="room-name">{{ getRoomName(room) }}</DialogTitle>
+              <DialogDescription class="room-meta">
+                {{ room.nickname}} {{ i18n.t('ui.level') }} {{ room.id.charAt(0) }}
+              </DialogDescription>
             </div>
-            <button @click="emit('close')" class="close-btn">
-                <X class="close-icon" />
-            </button>
-        </div>
+            <DialogClose class="close-btn">
+              <X class="close-icon" />
+            </DialogClose>
+          </div>
 
-        <div class="action-grid">
+          <div class="action-grid">
             <button 
-                class="action-btn"
-                :class="{ 'bookmark-active': isBookmarked }"
-                @click="toggleBookmark"
+              class="action-btn"
+              :class="{ 'is-active': isBookmarked }"
+              @click="toggleBookmark"
             >
-                <Bookmark class="action-icon" :class="{ 'fill-icon': isBookmarked }"/>
-                <span class="action-label">{{ isBookmarked ? i18n.t('ui.saved') : i18n.t('ui.save') }}</span>
-            </button>
-
-             <button 
-                class="action-btn"
-                :disabled="!room.hasPanorama"
-                :class="{ 'disabled': !room.hasPanorama }"
-                @click="showPanorama = true"
-            >
-                <Video class="action-icon"/>
-                <span class="action-label">{{ i18n.t('ui.view_360') }}</span>
+              <Bookmark class="action-icon" :class="{ 'fill-icon': isBookmarked }"/>
+              <span class="action-label">{{ isBookmarked ? i18n.t('ui.saved') : i18n.t('ui.save') }}</span>
             </button>
 
             <button 
-                class="action-btn"
-                :disabled="!room.hasTag"
-                :class="{ 'disabled': !room.hasTag }"
-                @click="showLocator = true"
+              class="action-btn"
+              :disabled="!room.hasPanorama"
+              :class="{ 'disabled': !room.hasPanorama }"
+              @click="showPanorama = true"
             >
-                <MapPin class="action-icon"/>
-                <span class="action-label">{{ i18n.t('ui.locate') }}</span>
+              <Video class="action-icon"/>
+              <span class="action-label">{{ i18n.t('ui.view_panorama') }}</span>
             </button>
-        </div>
-        
-        <div class="modal-footer">
-            {{ i18n.t('ui.tap_backdrop_to_close') }}
-        </div>
-    </div>
 
-    <!-- Panorama Viewer Overlay -->
-    <Transition name="fade">
-        <PanoramaViewer 
-            v-if="showPanorama && room" 
-            :url="room.panoramaUrl || ''" 
-            :roomName="getRoomName(room)"
-            @close="showPanorama = false"
-        />
-    </Transition>
+            <button 
+              class="action-btn"
+              :disabled="!room.hasTag"
+              :class="{ 'disabled': !room.hasTag }"
+              @click="showLocator = true"
+            >
+              <MapPin class="action-icon"/>
+              <span class="action-label">{{ i18n.t('ui.locate') }}</span>
+            </button>
+            
+            <button 
+              v-if="!isAlreadyOnThisFloor"
+              class="action-btn"
+              @click="navigateToFloor"
+            >
+              <Map class="action-icon"/>
+              <span class="action-label">{{ i18n.t('ui.show_on_map') }}</span>
+            </button>
+          </div>
+        </template>
+      </DialogContent>
+      
+      <!-- Overlays -->
+      <PanoramaViewer 
+        v-if="showPanorama && room" 
+        :url="room.panoramaUrl || ''" 
+        :roomName="getRoomName(room)"
+        @close="showPanorama = false"
+      />
 
-    <!-- AprilTag Locator Overlay -->
-    <Transition name="fade">
-        <AprilTagLocator 
-            v-if="showLocator && room" 
-            :roomId="room.id" 
-            :roomName="getRoomName(room)"
-            @close="showLocator = false"
-        />
-    </Transition>
-  </div>
+      <AprilTagLocator 
+        v-if="showLocator && room" 
+        :roomId="room.id" 
+        :roomName="getRoomName(room)"
+        @close="showLocator = false"
+      />
+    </DialogPortal>
+  </DialogRoot>
 </template>
 
 <style scoped>
-/* styles unchanged */
-.modal-root {
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.4);
   position: fixed;
   inset: 0;
-  z-index: 50;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  pointer-events: none;
-}
-
-@media (min-width: 640px) {
-  .modal-root {
-    align-items: center;
-  }
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  pointer-events: auto;
+  z-index: 200;
+  animation: fade-in 0.2s ease-out;
 }
 
 .modal-content {
-  background-color: var(--card);
-  width: 100%;
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90vw;
+  max-width: 400px;
   padding: 1.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  pointer-events: auto;
-  position: relative;
-  z-index: 10;
-  transform: translateY(0);
-}
-
-@media (min-width: 640px) {
-  .modal-content {
-    width: 24rem;
-    border-radius: 0.75rem;
-  }
+  border-radius: 1.25rem;
+  z-index: 210;
+  animation: scale-up 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  outline: none;
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
 }
 
 .room-name {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
+  color: var(--foreground);
 }
 
 .room-meta {
   font-size: 0.875rem;
   color: var(--muted-foreground);
+  text-transform: capitalize;
 }
 
 .close-btn {
-  padding: 0.25rem;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.05);
   border: none;
-  border-radius: 9999px;
+  padding: 0.5rem;
+  border-radius: 50%;
+  color: var(--foreground);
   display: flex;
-  align-items: center;
-  justify-content: center;
+  transition: all 0.2s;
+}
+
+.dark .close-btn {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .close-btn:hover {
-  background-color: var(--muted);
-}
-
-.close-icon {
-  width: 1.25rem;
-  height: 1.25rem;
+  transform: rotate(90deg);
 }
 
 .action-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: 1rem;
-  margin-bottom: 1rem;
 }
 
 .action-btn {
@@ -220,28 +222,40 @@ const getRoomName = (room: Room) => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
+  padding: 1rem;
+  border-radius: 1rem;
   border: 1px solid var(--border);
-  background-color: transparent;
+  background: rgba(255, 255, 255, 0.5);
   gap: 0.5rem;
-  transition: background-color 0.2s, color 0.2s;
+  transition: all 0.2s;
+}
+
+.dark .action-btn {
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .action-btn:hover:not(.disabled) {
-  background-color: var(--accent);
-  color: var(--accent-foreground);
+  border-color: var(--primary);
+  background: rgba(0, 0, 0, 0.02);
+  transform: translateY(-2px);
 }
 
-.bookmark-active {
-  border-color: var(--primary);
-  color: var(--primary);
-  background-color: rgba(15, 23, 42, 0.05);
+.dark .action-btn:hover:not(.disabled) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.action-btn.is-active {
+  border-color: #ef4444;
+  color: #ef4444;
 }
 
 .action-icon {
   width: 1.5rem;
   height: 1.5rem;
+}
+
+.dark .action-icon {
+  color: var(--foreground);
 }
 
 .fill-icon {
@@ -250,27 +264,32 @@ const getRoomName = (room: Room) => {
 
 .action-label {
   font-size: 0.75rem;
-  font-weight: 500;
+  font-weight: 600;
+}
+
+.dark .action-label {
+  color: var(--foreground);
 }
 
 .disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
+  filter: grayscale(1);
 }
 
-.modal-footer {
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-  text-align: center;
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
+@keyframes scale-up {
+  from { 
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to { 
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
 }
 </style>

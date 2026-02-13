@@ -15,6 +15,7 @@
     "comlink": "^4.4.2",
     "pannellum": "^2.5.6",
     "pinia": "^3.0.4",
+    "radix-vue": "^1.9.17",
     "vue": "^3.5.27",
     "vue-router": "^5.0.1"
   },

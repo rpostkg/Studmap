@@ -1,45 +1,13 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
 import { useI18nStore } from '../stores/i18n';
-import { buildingData, type Room } from '../data/building';
-import { Search, ChevronRight, Video, MapPin, Map as MapIcon } from 'lucide-vue-next';
+import { useRouter } from 'vue-router';
+import { buildingData } from '../data/building';
 
 const router = useRouter();
 const i18n = useI18nStore();
-const searchQuery = ref('');
-const selectedRoom = ref<Room & { floor: number } | null>(null);
-const isModalOpen = ref(false);
-
-const getRoomName = (room: Room) => {
-  const localized = i18n.t(`rooms.${room.id}`);
-  return localized !== `rooms.${room.id}` ? localized : room.name;
-};
-
-// Flatten all rooms for search
-const allRooms = computed(() => {
-  return buildingData.flatMap(floor => 
-    floor.rooms.map(room => ({ ...room, floor: floor.level }))
-  ).filter(r => r.type !== 'corridor' && r.type !== 'spacer' && r.type !== 'staircase');
-});
-
-const searchResults = computed(() => {
-  if (!searchQuery.value) return [];
-  const query = searchQuery.value.toLowerCase();
-  return allRooms.value.filter(room => {
-    const name = getRoomName(room).toLowerCase();
-    const nickname = room.nickname?.toLowerCase() || '';
-    return name.includes(query) || nickname.includes(query);
-  });
-});
 
 const navigateToFloor = (level: number) => {
   router.push({ name: 'floor', params: { level } });
-};
-
-const handleSearchResultClick = (room: Room & { floor: number }) => {
-  selectedRoom.value = room;
-  isModalOpen.value = true;
 };
 
 // CSS for isometric-like stacking
@@ -48,36 +16,9 @@ const floorsForDisplay = buildingData.slice().reverse();
 
 <template>
   <div class="home-container">
-    <!-- Search Bar -->
-    <div class="search-section">
-      <div class="search-input-wrapper">
-        <Search class="search-icon" />
-        <input 
-          v-model="searchQuery"
-          type="text" 
-          :placeholder="i18n.t('ui.search_placeholder')" 
-          class="search-input"
-        />
-      </div>
-      
-      <!-- Search Results Dropdown -->
-      <div v-if="searchQuery && searchResults.length > 0" class="search-dropdown">
-        <div 
-          v-for="room in searchResults" 
-          :key="room.id"
-          @click="handleSearchResultClick(room)"
-          class="search-result-item"
-        >
-          <div class="result-info">
-            <div class="result-name">{{ getRoomName(room) }}</div>
-            <div class="result-meta">{{ i18n.t('ui.level') }} {{ room.floor }}</div>
-          </div>
-          <ChevronRight class="chevron-icon" />
-        </div>
-      </div>
-      <div v-else-if="searchQuery && searchResults.length === 0" class="search-no-results">
-        {{ i18n.t('ui.no_rooms_found') }}
-      </div>
+    <div class="welcome-section">
+      <h2 class="welcome-title">{{ i18n.t('ui.app_title') }}</h2>
+      <p class="welcome-subtitle">{{ i18n.t('ui.select_floor_hint') }}</p>
     </div>
 
     <!-- Isometric Floor Selector -->
@@ -89,180 +30,58 @@ const floorsForDisplay = buildingData.slice().reverse();
                 @click="navigateToFloor(floor.level)"
                 class="floor-plate"
                 :style="{ 
-                    transform: `rotateX(60deg) rotateZ(45deg) translateY(${index * 40}px) translateZ(${-index * 20}px)`,
+                    '--z-offset': `${index * -60}px`,
+                    transform: `rotateX(55deg) rotateZ(-45deg) translateZ(calc(${index * -60}px))`,
                     zIndex: floorsForDisplay.length - index
                 }"
             >
-               <div class="floor-content">
+               <div class="floor-content" :style="{ 
+                    transform: 'translate(-8.5rem)'
+                }" >
                  <span class="floor-level">{{ floor.level }}</span>
-                 <div class="floor-label">{{ i18n.t('ui.level') }}</div>
+                 <div class="floor-label" :style="{ 
+                    transform: 'translate(8.5rem, 2rem)'
+                }">{{ i18n.t('ui.level') }}</div>
                </div>
             </div>
-        </div>
-        <p class="selector-hint">{{ i18n.t('ui.select_floor_hint') }}</p>
-    </div>
-
-    <!-- Search Result Modal -->
-    <div v-if="isModalOpen && selectedRoom" class="modal-overlay">
-        <div class="backdrop" @click="isModalOpen = false"></div>
-        <div class="modal-card">
-            <h3 class="modal-title">{{ getRoomName(selectedRoom) }}</h3>
-            <p class="modal-subtitle">{{ i18n.t('ui.level') }} {{ selectedRoom.floor }}</p>
-
-            <div class="modal-actions">
-                <button 
-                    class="modal-action-btn"
-                    :disabled="!selectedRoom.panoramaUrl"
-                    :class="{ 'dimmed': !selectedRoom.panoramaUrl }"
-                >
-                    <Video class="btn-icon" />
-                    <span class="btn-text">{{ i18n.t('ui.view_panorama') }}</span>
-                </button>
-
-                <button 
-                    class="modal-action-btn dimmed"
-                    disabled
-                >
-                    <MapPin class="btn-icon" />
-                    <span class="btn-text">{{ i18n.t('ui.locate_with_apriltag') }}</span>
-                </button>
-
-                <button 
-                    @click="navigateToFloor(selectedRoom.floor)"
-                    class="modal-action-btn"
-                >
-                    <MapIcon class="btn-icon" />
-                    <span class="btn-text">{{ i18n.t('ui.open_floor_map') }}</span>
-                </button>
-            </div>
-
-            <button @click="isModalOpen = false" class="cancel-btn">
-                {{ i18n.t('ui.cancel') }}
-            </button>
         </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* styles unchanged */
 .home-container {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding: 1rem;
+  gap: 2rem;
+  padding: 2rem 1rem;
   max-width: 28rem;
   margin: 0 auto;
   width: 100%;
 }
 
-.search-section {
-  position: relative;
-  z-index: 30;
-}
-
-.search-input-wrapper {
-  position: relative;
-}
-
-.search-icon {
-  position: absolute;
-  left: 0.75rem;
-  top: 0.75rem;
-  width: 1rem;
-  height: 1rem;
-  color: var(--muted-foreground);
-}
-
-.search-input {
-  width: 100%;
-  height: 2.5rem;
-  padding-left: 2.5rem;
-  padding-right: 1rem;
-  border-radius: 9999px;
-  border: 1px solid var(--input);
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(4px);
-  font-size: 0.875rem;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  transition: all 0.2s;
-  outline: none;
-}
-
-.search-input:focus {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  border-color: var(--primary);
-}
-
-.search-dropdown {
-  position: absolute;
-  top: 3rem;
-  left: 0;
-  right: 0;
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  max-height: 15rem;
-  overflow-y: auto;
-  z-index: 50;
-}
-
-.search-result-item {
-  padding: 0.75rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid var(--border);
-  cursor: pointer;
-}
-
-.search-result-item:last-child {
-  border-bottom: none;
-}
-
-.search-result-item:hover {
-  background-color: var(--muted);
-}
-
-.result-name {
-  font-weight: 700;
-}
-
-.result-meta {
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-}
-
-.chevron-icon {
-  width: 1rem;
-  height: 1rem;
-  color: var(--muted-foreground);
-}
-
-.search-no-results {
-  position: absolute;
-  top: 3rem;
-  left: 0;
-  right: 0;
-  background-color: var(--card);
-  padding: 1rem;
+.welcome-section {
   text-align: center;
-  font-size: 0.875rem;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.025em;
+}
+
+.welcome-subtitle {
   color: var(--muted-foreground);
-  border: 1px solid var(--border);
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  z-index: 50;
+  font-size: 1rem;
 }
 
 .floor-selector-section {
-    margin-top: 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 2.5rem 0;
+    padding: 2rem 0;
     perspective: 1000px;
 }
 
@@ -279,154 +98,54 @@ const floorsForDisplay = buildingData.slice().reverse();
 
 .floor-plate {
     position: absolute;
-    width: 10rem;
+    width: 15rem;
     height: 10rem;
     background-color: var(--card);
-    border: 2px solid rgba(15, 23, 42, 0.2);
+    border: 4px solid rgba(15, 23, 42, 0.2);
     cursor: pointer;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-out;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     display: flex;
     align-items: center;
     justify-content: center;
+    transform-style: preserve-3d;
 }
 
 .floor-plate:hover {
-    border-color: var(--primary);
-    background-color: rgba(15, 23, 42, 0.05);
+    border-color: #0ea5e9;
+    background-color: var(--accent);
+    transform: rotateX(55deg) rotateZ(-45deg) translateZ(calc(var(--z-offset) + 10px)) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
 .floor-content {
-    transform: rotate(-45deg);
+    transform: rotateZ(45deg) rotateX(-55deg);
     text-align: center;
+    transition: transform 0.3s;
+}
+
+.floor-plate:hover .floor-content {
+    transform: rotateZ(45deg) rotateX(-55deg) scale(1.1);
 }
 
 .floor-level {
-    font-size: 1.875rem;
+    font-size: 2.5rem;
     font-weight: 900;
-    color: rgba(0, 0, 0, 0.8);
-    transition: color 0.2s;
-}
-
-.floor-plate:hover .floor-level {
-    color: var(--primary);
+    color: #9797f9;
 }
 
 .floor-label {
-    font-size: 0.625rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    color: var(--muted-foreground);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: #9797f9;
 }
 
-.selector-hint {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-  margin-top: 2rem;
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
-}
-
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  padding: 1rem;
-}
-
-@media (min-width: 640px) {
-  .modal-overlay {
-    align-items: center;
+@media (prefers-color-scheme: dark) {
+  .floor-plate {
+    background-color: #1e1e2d;
+    border-color: rgba(255, 255, 255, 0.1);
   }
-}
-
-.backdrop {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-card {
-  background-color: var(--card);
-  width: 100%;
-  max-width: 24rem;
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  position: relative;
-  z-index: 10;
-}
-
-.modal-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  margin-bottom: 0.25rem;
-}
-
-.modal-subtitle {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-  margin-bottom: 1.5rem;
-}
-
-.modal-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.modal-action-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid var(--border);
-  background-color: transparent;
-  width: 100%;
-  transition: background-color 0.2s;
-  text-align: left;
-}
-
-.modal-action-btn:hover:not(.dimmed) {
-  background-color: var(--accent);
-}
-
-.btn-icon {
-  width: 1.25rem;
-  height: 1.25rem;
-  color: var(--primary);
-}
-
-.btn-text {
-  font-weight: 500;
-}
-
-.dimmed {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.cancel-btn {
-  margin-top: 1.5rem;
-  width: 100%;
-  padding: 0.5rem 0;
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-  background: transparent;
-  border: none;
-  transition: color 0.2s;
-}
-
-.cancel-btn:hover {
-  color: var(--foreground);
 }
 </style>
