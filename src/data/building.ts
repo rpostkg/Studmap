@@ -95,9 +95,6 @@ export const buildingData: Floor[] = [
             { id: '338', name: '338', type: 'room', width: 2, height: 3, x: -2, y: 12 },
             { id: '340', name: '340', type: 'room', width: 2, height: 2.5, x: -2, y: 15 },
             { id: '342', name: '342', type: 'room', width: 2, height: 2.5, x: -2, y: 17.5 },
-
-
-
         ]
     },
 ];

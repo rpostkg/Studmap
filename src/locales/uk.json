@@ -51,7 +51,17 @@
         "s1_up": "Сходи",
         "s3_down": "Сходи",
         "s3_up": "Сходи",
+        "floor1_staircase1": "Сходи",
+        "floor1_staircase2": "Сходи",
         "floor2_staircase1": "Сходи",
-        "floor2_staircase2": "Сходи"
+        "floor2_staircase2": "Сходи",
+        "floor3_staircase1": "Сходи",
+        "floor3_staircase2": "Сходи",
+        "entrance": "Вхід",
+        "hall": "Зал",
+        "cafeteria1": "Кафе/Зал",
+        "cafeteria2": "Кафе",
+        "kitchen": "Кухня",
+        "watercloset": "Туалет"
     }
 }

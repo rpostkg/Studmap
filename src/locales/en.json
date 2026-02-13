@@ -50,7 +50,17 @@
         "s1_up": "Stairs",
         "s3_down": "Stairs",
         "s3_up": "Stairs",
+        "floor1_staircase1": "Stairs",
+        "floor1_staircase2": "Stairs",
         "floor2_staircase1": "Stairs",
-        "floor2_staircase2": "Stairs"
+        "floor2_staircase2": "Stairs",
+        "floor3_staircase1": "Stairs",
+        "floor3_staircase2": "Stairs",
+        "entrance": "Entrance",
+        "hall": "General hall",
+        "cafeteria1": "Cafeteria/General hall",
+        "cafeteria2": "Cafeteria",
+        "kitchen": "Kitchen",
+        "watercloset": "Toilet"
     }
 }
