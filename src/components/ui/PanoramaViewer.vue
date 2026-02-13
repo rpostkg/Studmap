@@ -24,7 +24,7 @@ onMounted(() => {
       panorama: props.url,
       autoLoad: true,
       title: props.roomName,
-      author: 'Studmap 360'
+      author: 'Studmap'
     });
   }
 });

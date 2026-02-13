@@ -298,7 +298,7 @@ onUnmounted(() => {
         <div v-if="matchFound" class="success-banner">
           <div class="banner-content">
             <div class="success-dot"></div>
-            <span>{{ i18n.t('ui.saved') }}: <strong>{{ roomName }}</strong></span>
+            <span>{{ i18n.t('ui.located') }}: <strong>{{ roomName }}</strong></span>
           </div>
         </div>
       </Transition>
