@@ -1,15 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, useRoute } from 'vue-router';
-import { Home, Heart } from 'lucide-vue-next';
+import { Home, Bookmark, Settings } from 'lucide-vue-next';
+import { useI18nStore } from '../../stores/i18n';
 
 const route = useRoute();
+const i18n = useI18nStore();
 </script>
 
 <template>
   <div class="layout">
     <!-- Header -->
     <header class="header">
-      <h1 class="title">College Map</h1>
+      <h1 class="title">{{ i18n.t('ui.app_title') }}</h1>
     </header>
 
     <!-- Main Content Area -->
@@ -25,16 +27,25 @@ const route = useRoute();
         :class="{ 'active': route.name === 'home' }"
       >
         <Home class="icon" />
-        <span class="label">Home</span>
+        <span class="label">{{ i18n.t('ui.home') }}</span>
       </RouterLink>
 
       <RouterLink 
-        to="/favorites" 
+        to="/bookmarks" 
         class="nav-item"
-        :class="{ 'active': route.name === 'favorites' }"
+        :class="{ 'active': route.name === 'bookmarks' }"
       >
-        <Heart class="icon" />
-        <span class="label">Favorites</span>
+        <Bookmark class="icon" />
+        <span class="label">{{ i18n.t('ui.bookmarks') }}</span>
+      </RouterLink>
+
+      <RouterLink 
+        to="/settings" 
+        class="nav-item"
+        :class="{ 'active': route.name === 'settings' }"
+      >
+        <Settings class="icon" />
+        <span class="label">{{ i18n.t('ui.settings') }}</span>
       </RouterLink>
     </nav>
   </div>

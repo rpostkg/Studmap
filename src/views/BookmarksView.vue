@@ -1,17 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import { useRouter } from 'vue-router';
-import { useFavoritesStore } from '../stores/favorites';
+import { useBookmarksStore } from '../stores/bookmarks';
+import { useI18nStore } from '../stores/i18n';
 import { buildingData } from '../data/building';
-import { Heart, ChevronRight } from 'lucide-vue-next';
+import { Bookmark, ChevronRight } from 'lucide-vue-next';
 
-const favoritesStore = useFavoritesStore();
+const bookmarksStore = useBookmarksStore();
+const i18n = useI18nStore();
 const router = useRouter();
 
-const favoriteRooms = computed(() => {
+const bookmarkedRooms = computed(() => {
   return buildingData.flatMap(floor => 
     floor.rooms
-      .filter(room => favoritesStore.isFavorite(room.id))
+      .filter(room => bookmarksStore.isBookmarked(room.id))
       .map(room => ({ ...room, floor: floor.level }))
   );
 });
@@ -26,41 +28,40 @@ const navigateToRoom = (room: { id: string, floor: number }) => {
 </script>
 
 <template>
-  <div class="favorites-view">
-    <div class="favorites-header">
+  <div class="bookmarks-view">
+    <div class="bookmarks-header">
       <h2 class="view-title">
-        <Heart class="header-icon" />
-        Favorites
+        <Bookmark class="header-icon" />
+        {{ i18n.t('ui.bookmarks') }}
       </h2>
-      <p class="view-subtitle">Quick access to your saved rooms</p>
+      <p class="view-subtitle">{{ i18n.t('ui.quick_access_bookmarks') }}</p>
     </div>
 
     <div class="content-area">
-      <div v-if="favoriteRooms.length > 0" class="favorites-list">
+      <div v-if="bookmarkedRooms.length > 0" class="bookmarks-list">
         <div 
-          v-for="room in favoriteRooms" 
+          v-for="room in bookmarkedRooms" 
           :key="room.id"
           @click="navigateToRoom(room)"
-          class="favorite-card"
+          class="bookmark-card"
         >
           <div class="card-info">
-            <div class="card-name">{{ room.name }}</div>
+            <div class="card-name">{{ i18n.t(`rooms.${room.id}`) !== `rooms.${room.id}` ? i18n.t(`rooms.${room.id}`) : room.name }}</div>
             <div class="card-meta">
-              <span class="meta-tag">Level {{ room.floor }}</span>
-              <span class="meta-type">{{ room.type }}</span>
+              <span class="meta-tag">{{ i18n.t('ui.level') }} {{ room.floor }}</span>
             </div>
           </div>
           <ChevronRight class="card-chevron" />
         </div>
       </div>
 
-      <div v-else class="empty-favorites">
+      <div v-else class="empty-bookmarks">
         <div class="empty-icon-wrapper">
-          <Heart class="empty-icon" />
+          <Bookmark class="empty-icon" />
         </div>
         <div class="empty-text">
-          <h3 class="empty-title">No favorites yet</h3>
-          <p class="empty-subtitle">Tap the heart icon on a room to save it here.</p>
+          <h3 class="empty-title">{{ i18n.t('ui.no_bookmarks_yet') }}</h3>
+          <p class="empty-subtitle">{{ i18n.t('ui.tap_bookmark_hint') }}</p>
         </div>
       </div>
     </div>
@@ -68,14 +69,14 @@ const navigateToRoom = (room: { id: string, floor: number }) => {
 </template>
 
 <style scoped>
-.favorites-view {
+.bookmarks-view {
   display: flex;
   flex-direction: column;
   height: 100%;
   background-color: var(--background);
 }
 
-.favorites-header {
+.bookmarks-header {
   padding: 1rem;
   border-bottom: 1px solid var(--border);
   background-color: var(--card);
@@ -112,13 +113,13 @@ const navigateToRoom = (room: { id: string, floor: number }) => {
   padding: 1rem;
 }
 
-.favorites-list {
+.bookmarks-list {
   display: grid;
   grid-template-columns: 1fr;
   gap: 1rem;
 }
 
-.favorite-card {
+.bookmark-card {
   background-color: var(--card);
   border: 1px solid var(--border);
   border-radius: 0.75rem;
@@ -131,7 +132,7 @@ const navigateToRoom = (room: { id: string, floor: number }) => {
   align-items: center;
 }
 
-.favorite-card:hover {
+.bookmark-card:hover {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
   border-color: var(--primary);
 }
@@ -142,7 +143,7 @@ const navigateToRoom = (room: { id: string, floor: number }) => {
   transition: color 0.2s;
 }
 
-.favorite-card:hover .card-name {
+.bookmark-card:hover .card-name {
   color: var(--primary);
 }
 
@@ -161,10 +162,6 @@ const navigateToRoom = (room: { id: string, floor: number }) => {
   border-radius: 9999px;
 }
 
-.meta-type {
-  text-transform: capitalize;
-}
-
 .card-chevron {
   width: 1.25rem;
   height: 1.25rem;
@@ -172,11 +169,11 @@ const navigateToRoom = (room: { id: string, floor: number }) => {
   transition: color 0.2s;
 }
 
-.favorite-card:hover .card-chevron {
+.bookmark-card:hover .card-chevron {
   color: var(--primary);
 }
 
-.empty-favorites {
+.empty-bookmarks {
   display: flex;
   flex-direction: column;
   items-center: center;

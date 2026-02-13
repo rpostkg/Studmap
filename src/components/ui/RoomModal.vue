@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { computed, watch, ref } from 'vue';
 import { type Room } from '../../data/building';
-import { useFavoritesStore } from '../../stores/favorites';
-import { X, Heart, MapPin, Video } from 'lucide-vue-next';
+import { useBookmarksStore } from '../../stores/bookmarks';
+import { useI18nStore } from '../../stores/i18n';
+import { X, Bookmark, MapPin, Video } from 'lucide-vue-next';
 import PanoramaViewer from './PanoramaViewer.vue';
 import AprilTagLocator from './AprilTagLocator.vue';
 
@@ -16,10 +17,11 @@ const emit = defineEmits<{
   (e: 'close'): void;
 }>();
 
+const i18n = useI18nStore();
 const showPanorama = ref(false);
 const showLocator = ref(false);
 
-const favoritesStore = useFavoritesStore();
+const bookmarksStore = useBookmarksStore();
 
 watch(() => props.isOpen, (newVal) => {
   if (!newVal) {
@@ -33,15 +35,20 @@ watch(() => props.room?.id, () => {
   showLocator.value = false;
 });
 
-const isFavorite = computed(() => {
+const isBookmarked = computed(() => {
   if (!props.room) return false;
-  return favoritesStore.isFavorite(props.room.id);
+  return bookmarksStore.isBookmarked(props.room.id);
 });
 
-const toggleFavorite = () => {
+const toggleBookmark = () => {
   if (props.room) {
-    favoritesStore.toggleFavorite(props.room.id);
+    bookmarksStore.toggleBookmark(props.room.id);
   }
+};
+
+const getRoomName = (room: Room) => {
+  const localized = i18n.t(`rooms.${room.id}`);
+  return localized !== `rooms.${room.id}` ? localized : room.name;
 };
 </script>
 
@@ -54,8 +61,8 @@ const toggleFavorite = () => {
     <div class="modal-content">
         <div class="modal-header">
             <div class="room-info">
-                <h3 class="room-name">{{ room.name }}</h3>
-                <p class="room-meta">{{ room.nickname || room.type }} | Floor {{ room.id.charAt(0) }}</p>
+                <h3 class="room-name">{{ getRoomName(room) }}</h3>
+                <p class="room-meta">{{ room.nickname || '' }} | {{ i18n.t('ui.floor') }} {{ room.id.charAt(0) }}</p>
             </div>
             <button @click="emit('close')" class="close-btn">
                 <X class="close-icon" />
@@ -65,11 +72,11 @@ const toggleFavorite = () => {
         <div class="action-grid">
             <button 
                 class="action-btn"
-                :class="{ 'favorite-active': isFavorite }"
-                @click="toggleFavorite"
+                :class="{ 'bookmark-active': isBookmarked }"
+                @click="toggleBookmark"
             >
-                <Heart class="action-icon" :class="{ 'fill-icon': isFavorite }"/>
-                <span class="action-label">{{ isFavorite ? 'Saved' : 'Save' }}</span>
+                <Bookmark class="action-icon" :class="{ 'fill-icon': isBookmarked }"/>
+                <span class="action-label">{{ isBookmarked ? i18n.t('ui.saved') : i18n.t('ui.save') }}</span>
             </button>
 
              <button 
@@ -79,7 +86,7 @@ const toggleFavorite = () => {
                 @click="showPanorama = true"
             >
                 <Video class="action-icon"/>
-                <span class="action-label">View 360</span>
+                <span class="action-label">{{ i18n.t('ui.view_360') }}</span>
             </button>
 
             <button 
@@ -89,12 +96,12 @@ const toggleFavorite = () => {
                 @click="showLocator = true"
             >
                 <MapPin class="action-icon"/>
-                <span class="action-label">Locate</span>
+                <span class="action-label">{{ i18n.t('ui.locate') }}</span>
             </button>
         </div>
         
         <div class="modal-footer">
-            Tap backdrop to close
+            {{ i18n.t('ui.tap_backdrop_to_close') }}
         </div>
     </div>
 
@@ -103,7 +110,7 @@ const toggleFavorite = () => {
         <PanoramaViewer 
             v-if="showPanorama && room" 
             :url="room.panoramaUrl || ''" 
-            :roomName="room.name"
+            :roomName="getRoomName(room)"
             @close="showPanorama = false"
         />
     </Transition>
@@ -113,7 +120,7 @@ const toggleFavorite = () => {
         <AprilTagLocator 
             v-if="showLocator && room" 
             :roomId="room.id" 
-            :roomName="room.name"
+            :roomName="getRoomName(room)"
             @close="showLocator = false"
         />
     </Transition>
@@ -121,6 +128,7 @@ const toggleFavorite = () => {
 </template>
 
 <style scoped>
+/* styles unchanged */
 .modal-root {
   position: fixed;
   inset: 0;
@@ -225,7 +233,7 @@ const toggleFavorite = () => {
   color: var(--accent-foreground);
 }
 
-.favorite-active {
+.bookmark-active {
   border-color: var(--primary);
   color: var(--primary);
   background-color: rgba(15, 23, 42, 0.05);

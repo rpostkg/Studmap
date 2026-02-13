@@ -2,9 +2,10 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import * as Comlink from 'comlink';
 import { X, Camera } from 'lucide-vue-next';
+import { useI18nStore } from '../../stores/i18n';
 
 const props = defineProps<{
-  roomId: string; // 36h11 has more than enough IDs for every room in the college. Besides the rooms use pure numbers and don't exceed 586 in total.
+  roomId: string;
   roomName: string;
 }>();
 
@@ -12,13 +13,14 @@ const emit = defineEmits<{
   (e: 'close'): void;
 }>();
 
+const i18n = useI18nStore();
 const video = ref<HTMLVideoElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 const isSearching = ref(true);
 const matchFound = ref(false);
 const error = ref<string | null>(null);
 const isLoading = ref(true);
-const loadingStatus = ref('Initializing...');
+const loadingStatus = ref(i18n.t('ui.initializing'));
 const debugLogs = ref<string[]>([]);
 const showDebug = ref(false);
 const detectionCount = ref(0);
@@ -46,7 +48,7 @@ let bannerTimeout: number | null = null;
 const initCamera = async () => {
   addLog('Initializing camera...');
   if (!navigator.mediaDevices) {
-    const errorMsg = "Camera API (mediaDevices) not found. This app requires a Secure Context (HTTPS or localhost) to access the camera.";
+    const errorMsg = i18n.t('ui.camera_error_secure');
     error.value = errorMsg;
     addLog(`ERROR: ${errorMsg}`);
     console.warn("Secure Context check:", window.isSecureContext);
@@ -68,7 +70,7 @@ const initCamera = async () => {
     }
   } catch (err: any) {
     addLog(`Camera error: ${err.message}`);
-    error.value = `Camera access denied: ${err.message}`;
+    error.value = i18n.t('ui.camera_error_denied', { message: err.message });
   }
 };
 
@@ -87,11 +89,9 @@ const processFrame = async () => {
     return;
   }
 
-  // Draw video frame to canvas - keeps feed live even after match
+  // Draw video frame to canvas
   ctx.drawImage(video.value, 0, 0, canvas.value.width, canvas.value.height);
   
-  // Always detect to handle transient visibility
-  // Get grayscale pixels
   const imageData = ctx.getImageData(0, 0, canvas.value.width, canvas.value.height);
   const pixels = imageData.data;
   const grayscale = new Uint8Array(canvas.value.width * canvas.value.height);
@@ -113,20 +113,17 @@ const processFrame = async () => {
         matchFound.value = true;
         addLog(`Located: ${props.roomName}`);
       }
-      // Clear any pending hide timer
       if (bannerTimeout) {
         window.clearTimeout(bannerTimeout);
         bannerTimeout = null;
       }
     } else if (matchFound.value && !bannerTimeout) {
-      // Tag lost, start grace period
       bannerTimeout = window.setTimeout(() => {
         matchFound.value = false;
         bannerTimeout = null;
       }, 500);
     }
 
-    // FPS tracking
     const endTime = performance.now();
     if (lastFrameTime.value > 0) {
       const delta = endTime - lastFrameTime.value;
@@ -137,7 +134,6 @@ const processFrame = async () => {
     addLog(`Detection Error: ${err.message}`);
   }
 
-  // Always schedule next frame to keep camera live
   animationId = requestAnimationFrame(processFrame);
 };
 
@@ -192,11 +188,11 @@ const runTest = async () => {
 onMounted(async () => {
   addLog('Mounted, starting init...');
   isLoading.value = true;
-  loadingStatus.value = 'Connecting camera...';
+  loadingStatus.value = i18n.t('ui.connecting_camera');
   await initCamera();
 
   try {
-    loadingStatus.value = 'Preparing worker...';
+    loadingStatus.value = i18n.t('ui.preparing_worker');
     addLog('Loading worker from /apriltag/apriltag.js');
     worker = new Worker('/apriltag/apriltag.js', { type: 'module' });
     
@@ -206,7 +202,7 @@ onMounted(async () => {
 
     const ApriltagConstructor: any = Comlink.wrap(worker);
     
-    loadingStatus.value = 'Initializing WASM (this may take a bit)...';
+    loadingStatus.value = i18n.t('ui.initializing_wasm');
     addLog('Creating Apriltag instance...');
     
     apriltag = await new ApriltagConstructor(Comlink.proxy(() => {
@@ -241,8 +237,8 @@ onUnmounted(() => {
         <X />
       </button>
       <div class="header-text" @click="showDebug = !showDebug">
-        <h3>Locating {{ roomName }}</h3>
-        <p v-if="!matchFound">Scan the AprilTag for ID {{ roomId.replace(/\D/g, '') }}</p>
+        <h3>{{ i18n.t('ui.locating_room', { name: roomName }) }}</h3>
+        <p v-if="!matchFound">{{ i18n.t('ui.scan_hint_id', { id: roomId.replace(/\D/g, '') }) }}</p>
       </div>
     </div>
 
@@ -250,7 +246,7 @@ onUnmounted(() => {
       <video ref="video" autoplay playsinline muted class="hidden-video"></video>
       <canvas ref="canvas" class="detection-canvas"></canvas>
       
-      <div class="log-overlay" v-if="showDebug && !isLoading && !error"> // yadda yadda overlay log shall be toggled through this statement
+      <div class="log-overlay" v-if="showDebug && !isLoading && !error">
         <div v-for="(log, i) in debugLogs.slice(0, 5)" :key="i" class="overlay-log-line">
           {{ log }}
         </div>
@@ -302,7 +298,7 @@ onUnmounted(() => {
         <div v-if="matchFound" class="success-banner">
           <div class="banner-content">
             <div class="success-dot"></div>
-            <span>Located: <strong>{{ roomName }}</strong></span>
+            <span>{{ i18n.t('ui.saved') }}: <strong>{{ roomName }}</strong></span>
           </div>
         </div>
       </Transition>
@@ -311,13 +307,14 @@ onUnmounted(() => {
     <div class="locator-footer" v-if="!matchFound && !error && !isLoading">
       <div class="scan-hint">
         <Camera class="hint-icon" />
-        <span>Point your camera at the tag</span>
+        <span>{{ i18n.t('ui.point_camera_hint') }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+/* styles unchanged */
 .locator-overlay {
   position: fixed;
   inset: 0;

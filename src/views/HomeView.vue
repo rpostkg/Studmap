@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
+import { useI18nStore } from '../stores/i18n';
 import { buildingData, type Room } from '../data/building';
 import { Search, ChevronRight, Video, MapPin, Map as MapIcon } from 'lucide-vue-next';
 
 const router = useRouter();
+const i18n = useI18nStore();
 const searchQuery = ref('');
 const selectedRoom = ref<Room & { floor: number } | null>(null);
 const isModalOpen = ref(false);
+
+const getRoomName = (room: Room) => {
+  const localized = i18n.t(`rooms.${room.id}`);
+  return localized !== `rooms.${room.id}` ? localized : room.name;
+};
 
 // Flatten all rooms for search
 const allRooms = computed(() => {
@@ -19,10 +26,11 @@ const allRooms = computed(() => {
 const searchResults = computed(() => {
   if (!searchQuery.value) return [];
   const query = searchQuery.value.toLowerCase();
-  return allRooms.value.filter(room => 
-    room.name.toLowerCase().includes(query) || 
-    (room.nickname && room.nickname.toLowerCase().includes(query))
-  );
+  return allRooms.value.filter(room => {
+    const name = getRoomName(room).toLowerCase();
+    const nickname = room.nickname?.toLowerCase() || '';
+    return name.includes(query) || nickname.includes(query);
+  });
 });
 
 const navigateToFloor = (level: number) => {
@@ -47,7 +55,7 @@ const floorsForDisplay = buildingData.slice().reverse();
         <input 
           v-model="searchQuery"
           type="text" 
-          placeholder="Search room (e.g. 101, Lab)" 
+          :placeholder="i18n.t('ui.search_placeholder')" 
           class="search-input"
         />
       </div>
@@ -61,14 +69,14 @@ const floorsForDisplay = buildingData.slice().reverse();
           class="search-result-item"
         >
           <div class="result-info">
-            <div class="result-name">{{ room.name }}</div>
-            <div class="result-meta">Level {{ room.floor }} • {{ room.type }}</div>
+            <div class="result-name">{{ getRoomName(room) }}</div>
+            <div class="result-meta">{{ i18n.t('ui.level') }} {{ room.floor }}</div>
           </div>
           <ChevronRight class="chevron-icon" />
         </div>
       </div>
       <div v-else-if="searchQuery && searchResults.length === 0" class="search-no-results">
-        No rooms found.
+        {{ i18n.t('ui.no_rooms_found') }}
       </div>
     </div>
 
@@ -87,19 +95,19 @@ const floorsForDisplay = buildingData.slice().reverse();
             >
                <div class="floor-content">
                  <span class="floor-level">{{ floor.level }}</span>
-                 <div class="floor-label">Level</div>
+                 <div class="floor-label">{{ i18n.t('ui.level') }}</div>
                </div>
             </div>
         </div>
-        <p class="selector-hint">Select a floor to explore</p>
+        <p class="selector-hint">{{ i18n.t('ui.select_floor_hint') }}</p>
     </div>
 
     <!-- Search Result Modal -->
     <div v-if="isModalOpen && selectedRoom" class="modal-overlay">
         <div class="backdrop" @click="isModalOpen = false"></div>
         <div class="modal-card">
-            <h3 class="modal-title">{{ selectedRoom.name }}</h3>
-            <p class="modal-subtitle">Level {{ selectedRoom.floor }} • {{ selectedRoom.type }}</p>
+            <h3 class="modal-title">{{ getRoomName(selectedRoom) }}</h3>
+            <p class="modal-subtitle">{{ i18n.t('ui.level') }} {{ selectedRoom.floor }}</p>
 
             <div class="modal-actions">
                 <button 
@@ -108,7 +116,7 @@ const floorsForDisplay = buildingData.slice().reverse();
                     :class="{ 'dimmed': !selectedRoom.panoramaUrl }"
                 >
                     <Video class="btn-icon" />
-                    <span class="btn-text">View Panorama</span>
+                    <span class="btn-text">{{ i18n.t('ui.view_panorama') }}</span>
                 </button>
 
                 <button 
@@ -116,7 +124,7 @@ const floorsForDisplay = buildingData.slice().reverse();
                     disabled
                 >
                     <MapPin class="btn-icon" />
-                    <span class="btn-text">Locate with AprilTag</span>
+                    <span class="btn-text">{{ i18n.t('ui.locate_with_apriltag') }}</span>
                 </button>
 
                 <button 
@@ -124,12 +132,12 @@ const floorsForDisplay = buildingData.slice().reverse();
                     class="modal-action-btn"
                 >
                     <MapIcon class="btn-icon" />
-                    <span class="btn-text">Open Floor Map</span>
+                    <span class="btn-text">{{ i18n.t('ui.open_floor_map') }}</span>
                 </button>
             </div>
 
             <button @click="isModalOpen = false" class="cancel-btn">
-                Cancel
+                {{ i18n.t('ui.cancel') }}
             </button>
         </div>
     </div>
@@ -137,6 +145,7 @@ const floorsForDisplay = buildingData.slice().reverse();
 </template>
 
 <style scoped>
+/* styles unchanged */
 .home-container {
   display: flex;
   flex-direction: column;
@@ -285,7 +294,6 @@ const floorsForDisplay = buildingData.slice().reverse();
 .floor-plate:hover {
     border-color: var(--primary);
     background-color: rgba(15, 23, 42, 0.05);
-    /* In a real scenario we'd handle the transform better but this is for simplicity */
 }
 
 .floor-content {

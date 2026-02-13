@@ -3,9 +3,11 @@ import { useRoute } from 'vue-router';
 import { buildingData, type Room } from '../data/building';
 import { computed, ref } from 'vue';
 import RoomModal from '../components/ui/RoomModal.vue';
-import { useFavoritesStore } from '../stores/favorites';
+import { useBookmarksStore } from '../stores/bookmarks';
+import { useI18nStore } from '../stores/i18n';
 import { RotateCw } from 'lucide-vue-next';
 
+const i18n = useI18nStore();
 const route = useRoute();
 const level = computed(() => parseInt(route.params.level as string));
 const floor = computed(() => buildingData.find(f => f.level === level.value));
@@ -14,7 +16,12 @@ const highlightRoomId = computed(() => route.query.highlight as string);
 const selectedRoom = ref<Room | null>(null);
 const isModalOpen = ref(false);
 const isFlipped = ref(false);
-const favoritesStore = useFavoritesStore();
+const bookmarksStore = useBookmarksStore();
+
+const getRoomName = (room: Room) => {
+  const localized = i18n.t(`rooms.${room.id}`);
+  return localized !== `rooms.${room.id}` ? localized : room.name;
+};
 
 const handleRoomClick = (room: Room) => {
     if (room.type === 'spacer') return;
@@ -74,8 +81,6 @@ const getRoomStyle = (room: Room) => {
     
     if (shouldRotate.value) {
         // Rotate 90 degrees Clockwise
-        // newX = height - (y + h)
-        // newY = x
         left = (layoutHeight.value - (normY + room.height)) * UNIT_SIZE;
         top = normX * UNIT_SIZE;
         width = room.height * UNIT_SIZE;
@@ -107,8 +112,8 @@ const getRoomClass = (room: Room) => {
     // Highlight specific room from navigation
     if (highlightRoomId.value === room.id) classes.push("highlight");
 
-    // Highlight favorites
-    if (favoritesStore.isFavorite(room.id)) classes.push("favorite");
+    // Highlight bookmarks
+    if (bookmarksStore.isBookmarked(room.id)) classes.push("bookmark");
 
     return classes.join(' ');
 };
@@ -117,15 +122,15 @@ const getRoomClass = (room: Room) => {
 <template>
   <div class="floor-view">
     <div class="floor-header">
-        <h2 class="floor-title">Level {{ level }}</h2>
+        <h2 class="floor-title">{{ i18n.t('ui.level') }} {{ level }}</h2>
         <button 
             @click="isFlipped = !isFlipped" 
             class="header-action-btn"
             :class="{ 'is-flipped': isFlipped }"
-            title="Flip View 180°"
+            :title="i18n.t('ui.flip_view')"
         >
             <RotateCw class="action-icon" />
-            <span class="btn-label">Flip</span>
+            <span class="btn-label">{{ i18n.t('ui.flip') }}</span>
         </button>
     </div>
     
@@ -138,13 +143,13 @@ const getRoomClass = (room: Room) => {
                         :style="getRoomStyle(room)"
                         @click="handleRoomClick(room)"
                     >
-                        <span v-if="room.type !== 'corridor' && room.type !== 'spacer'" class="room-label">{{ room.name }}</span>
+                        <span v-if="room.type !== 'corridor' && room.type !== 'spacer'" class="room-label">{{ getRoomName(room) }}</span>
                     </div>
                 </template>
             </div>
         </div>
         <div v-else class="empty-state">
-            Floor {{ level }} not found.
+            {{ i18n.t('ui.floor_not_found', { level: String(level) }) }}
         </div>
     </div>
 
@@ -157,6 +162,7 @@ const getRoomClass = (room: Room) => {
 </template>
 
 <style scoped>
+/* styles unchanged */
 .floor-view {
   height: 100%;
   width: 100%;
@@ -184,20 +190,15 @@ const getRoomClass = (room: Room) => {
   font-weight: 700;
 }
 
-.header-hint {
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-}
-
 .map-container {
   flex: 1;
   overflow: auto;
-  background-color: #f5f5f4; /* stone-50 */
+  background-color: #f5f5f4;
 }
 
 @media (prefers-color-scheme: dark) {
   .map-container {
-    background-color: rgba(12, 10, 9, 0.5); /* dark stone-950/50 */
+    background-color: rgba(12, 10, 9, 0.5);
   }
 }
 
@@ -215,7 +216,6 @@ const getRoomClass = (room: Room) => {
   border-radius: 0.75rem;
   border: 1px solid var(--border);
   box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
-  /* Absolute children will position relative to this */
 }
 
 @media (prefers-color-scheme: dark) {
@@ -254,28 +254,28 @@ const getRoomClass = (room: Room) => {
 }
 
 .staircase {
-  background-color: #ffedd5; /* orange-100 */
-  border-color: #fed7aa; /* orange-200 */
-  color: #c2410c; /* orange-700 */
+  background-color: #ffedd5;
+  border-color: #fed7aa;
+  color: #c2410c;
 }
 
 @media (prefers-color-scheme: dark) {
   .staircase {
-    background-color: #7c2d12; /* orange-900 */
-    color: #fdba74; /* orange-300 */
+    background-color: #7c2d12;
+    color: #fdba74;
   }
 }
 
 .auditorium {
-  background-color: #f3e8ff; /* purple-100 */
-  border-color: #e9d5ff; /* purple-200 */
-  color: #7e22ce; /* purple-700 */
+  background-color: #f3e8ff;
+  border-color: #e9d5ff;
+  color: #7e22ce;
 }
 
 @media (prefers-color-scheme: dark) {
   .auditorium {
-    background-color: #581c87; /* purple-900 */
-    color: #d8b4fe; /* purple-300 */
+    background-color: #581c87;
+    color: #d8b4fe;
   }
 }
 
@@ -297,16 +297,16 @@ const getRoomClass = (room: Room) => {
   transform: scale(1.05);
 }
 
-.favorite {
-  background-color: #fefce8; /* yellow-50 */
-  border-color: #facc15; /* yellow-400 */
-  color: #a16207; /* yellow-700 */
+.bookmark {
+  background-color: #fefce8;
+  border-color: #facc15;
+  color: #a16207;
   box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.5);
   z-index: 10;
 }
 
 @media (prefers-color-scheme: dark) {
-  .favorite {
+  .bookmark {
     background-color: rgba(234, 179, 8, 0.3);
   }
 }

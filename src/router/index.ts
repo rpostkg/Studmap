@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import FloorView from '../views/FloorView.vue'
-import FavoritesView from '../views/FavoritesView.vue'
+import BookmarksView from '../views/BookmarksView.vue'
+import SettingsView from '../views/SettingsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -17,9 +18,14 @@ const router = createRouter({
       component: FloorView
     },
     {
-      path: '/favorites',
-      name: 'favorites',
-      component: FavoritesView
+      path: '/bookmarks',
+      name: 'bookmarks',
+      component: BookmarksView
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: SettingsView
     }
   ]
 })
