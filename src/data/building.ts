@@ -38,14 +38,14 @@ export const buildingData: Floor[] = [
         level: 2,
         rooms: [
             { id: 'c3', name: 'Corridor', type: 'corridor', width: 1, height: 20, x: 0, y: 0 },
+            { id: 'floor2_staircase1', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 5 },
+            { id: 'floor2_staircase2', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 14 },
             // Right side
             { id: '319', name: '319', type: 'room', width: 2, height: 3, x: 1, y: 0 },
             { id: '321', name: '321', type: 'room', width: 2, height: 2, x: 1, y: 3 },
-            { id: 'floor2_staircase1', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 5 },
             { id: '323', name: '323', type: 'room', width: 2, height: 2, x: 1, y: 6 },
             { id: '325', name: '325', type: 'room', width: 2, height: 3, x: 1, y: 8 },
             { id: '327', name: '327', type: 'room', width: 2, height: 3, x: 1, y: 11 },
-            { id: 'floor2_staircase2', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 14 },
             { id: '329', name: '329', type: 'room', width: 2, height: 2, x: 1, y: 15, hasTag: true },
             { id: '331', name: '331', type: 'room', width: 2, height: 3, x: 1, y: 17 },
             //Left side
@@ -61,18 +61,32 @@ export const buildingData: Floor[] = [
     {
         level: 3,
         rooms: [
-            { id: '201', name: '201', type: 'room', width: 2, height: 1, x: 1, y: 1 },
-            { id: '202', name: '202', type: 'room', width: 2, height: 1, x: 3, y: 1 },
-            { id: '203', name: '203', type: 'room', width: 2, height: 1, x: 5, y: 1 },
-            { id: '204', name: '204', type: 'room', width: 2, height: 1, x: 7, y: 1 },
-            { id: '205', name: '205', type: 'room', width: 2, height: 1, x: 9, y: 1 },
-            { id: '206', name: '206', type: 'room', width: 2, height: 1, x: 11, y: 1 },
-            { id: 'c2', name: 'Corridor', type: 'corridor', width: 12, height: 1, x: 1, y: 2 },
-            { id: '207', name: '207', type: 'lab', width: 4, height: 1, x: 1, y: 3 },
-            { id: '208', name: '208', type: 'lab', width: 4, height: 1, x: 5, y: 3 },
-            { id: '209', name: '209', type: 'lab', width: 4, height: 1, x: 9, y: 3 },
-            { id: 's3_down', name: 'Stairs Down', type: 'staircase', width: 1, height: 1, x: 3, y: 2 },
-            { id: 's3_up', name: 'Stairs Up', type: 'staircase', width: 1, height: 1, x: 8, y: 2 }
+            { id: 'c3', name: 'Corridor', type: 'corridor', width: 1, height: 20, x: 0, y: 0 },
+            { id: 'floor3_staircase1', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 5 },
+            { id: 'floor3_staircase2', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 14 },
+            // Right side
+            { id: '333', name: '333', type: 'room', width: 2, height: 3, x: 1, y: 0 },
+            { id: '335', name: '335', type: 'room', width: 2, height: 2, x: 1, y: 3 },
+            { id: '337', name: '337', type: 'room', width: 2, height: 1, x: 1, y: 6 },
+            { id: '339', name: '339', type: 'room', width: 2, height: 2, x: 1, y: 7 },
+            { id: '341', name: '341', type: 'room', width: 2, height: 2, x: 1, y: 9 },
+            { id: '343', name: '343', type: 'room', width: 2, height: 2, x: 1, y: 11 },
+            { id: '345', name: '345', type: 'room', width: 2, height: 1, x: 1, y: 13 },
+            { id: '347', name: '347', type: 'room', width: 2, height: 2, x: 1, y: 15 },
+            { id: '349', name: '349', type: 'room', width: 2, height: 3, x: 1, y: 17 },
+            // Left side
+            { id: '326', name: '326', type: 'room', width: 2, height: 3, x: -2, y: 0 },
+            { id: '328', name: '328', type: 'room', width: 2, height: 2, x: -2, y: 3 },
+            { id: '330', name: '330', type: 'room', width: 2, height: 1, x: -2, y: 5 },
+            { id: '332', name: '332', type: 'room', width: 2, height: 2, x: -2, y: 6 },
+            { id: '334', name: '334', type: 'room', width: 2, height: 1, x: -2, y: 8 },
+            { id: '336', name: '336', type: 'room', width: 2, height: 3, x: -2, y: 9 },
+            { id: '338', name: '338', type: 'room', width: 2, height: 3, x: -2, y: 12 },
+            { id: '340', name: '340', type: 'room', width: 2, height: 2.5, x: -2, y: 15 },
+            { id: '342', name: '342', type: 'room', width: 2, height: 2.5, x: -2, y: 17.5 },
+
+
+
         ]
     },
 ];
