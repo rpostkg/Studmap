@@ -82,7 +82,7 @@ const navigateToFloor = () => {
             <div class="room-info">
               <DialogTitle class="room-name">{{ getRoomName(room) }}</DialogTitle>
               <DialogDescription class="room-meta">
-                {{ room.nickname || room.type }} | {{ i18n.t('ui.level') }} {{ room.id.charAt(0) }}
+                {{ room.nickname}} {{ i18n.t('ui.level') }} {{ room.id.charAt(0) }}
               </DialogDescription>
             </div>
             <DialogClose class="close-btn">
