@@ -17,7 +17,13 @@ const toggleTheme = () => {
 };
 
 const updateTheme = () => {
-  document.documentElement.classList.toggle('dark', isDarkMode.value);
+  if (isDarkMode.value) {
+    document.documentElement.classList.add('dark');
+    document.documentElement.classList.remove('light');
+  } else {
+    document.documentElement.classList.add('light');
+    document.documentElement.classList.remove('dark');
+  }
   localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'light');
 };
 

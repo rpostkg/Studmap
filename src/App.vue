@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
 import MainLayout from './components/layout/MainLayout.vue'
+import { onMounted } from 'vue';
+
+onMounted(() => {
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else if (savedTheme === 'light') {
+    document.documentElement.classList.add('light');
+  } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.classList.add('dark');
+  }
+});
 </script>
 
 <template>
