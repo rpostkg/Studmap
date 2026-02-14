@@ -272,10 +272,12 @@ onUnmounted(() => {
       <button @click="emit('close')" class="close-btn">
         <X />
       </button>
-      <div class="header-text" @click="showDebug = !showDebug">
+      <!--<div class="header-text" @click="showDebug = !showDebug">-->
+      <div class="header-text">
         <h3>{{ i18n.t('ui.locating_room', { name: roomName }) }}</h3>
         <p v-if="!matchFound">{{ i18n.t('ui.scan_hint_id', { id: roomId.replace(/\D/g, '') }) }}</p>
       </div>
+      <!--</div>-->
     </div>
 
     <div class="camera-container">
