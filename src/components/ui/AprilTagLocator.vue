@@ -316,9 +316,9 @@ onUnmounted(() => {
       <div v-if="isLoading" class="overlay-state">
         <div class="spinner"></div>
         <p>{{ loadingStatus }}</p>
-        <button @click="showDebug = !showDebug" class="debug-toggle">
+        <!--<button @click="showDebug = !showDebug" class="debug-toggle">
           {{ showDebug ? 'Hide Debug' : 'Show Debug' }}
-        </button>
+        </button>-->
       </div>
 
       <div v-if="showDebug" class="debug-console">
