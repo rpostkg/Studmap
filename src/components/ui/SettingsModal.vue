@@ -111,7 +111,7 @@ onMounted(() => {
             <div class="setting-info">
               <div>
                 <div class="setting-label">{{ i18n.t('ui.version') }}</div>
-                <div class="setting-value">0.1.0-alpha</div>
+                <div class="setting-value">0.9.0</div>
               </div>
             </div>
           </div>
