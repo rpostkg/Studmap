@@ -53,7 +53,7 @@ export const buildingData: Floor[] = [
             { id: 'floor2_staircase2', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 14 },
             // Right side
             { id: '319', name: '319', type: 'room', width: 2, height: 3, x: 1, y: 0 },
-            { id: '321', name: '321', type: 'room', width: 2, height: 2, x: 1, y: 3 },
+            { id: '321', name: '321', type: 'room', width: 2, height: 2, x: 1, y: 3, hasTag: true },
             { id: '323', name: '323', type: 'room', width: 2, height: 2, x: 1, y: 6 },
             { id: '325', name: '325', type: 'room', width: 2, height: 3, x: 1, y: 8 },
             { id: '327', name: '327', type: 'room', width: 2, height: 3, x: 1, y: 11 },
