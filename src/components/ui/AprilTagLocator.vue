@@ -18,6 +18,8 @@ const video = ref<HTMLVideoElement | null>(null);
 const canvas = ref<HTMLCanvasElement | null>(null);
 const isSearching = ref(true);
 const matchFound = ref(false);
+const wrongRoomDetected = ref(false);
+const detectedRoomId = ref<string | null>(null);
 const error = ref<string | null>(null);
 const isLoading = ref(true);
 const loadingStatus = ref(i18n.t('ui.initializing'));
@@ -44,6 +46,7 @@ let apriltag: any = null;
 let animationId: number | null = null;
 let closeTimeout: number | null = null;
 let bannerTimeout: number | null = null;
+let wrongRoomTimeout: number | null = null;
 
 const initCamera = async () => {
   addLog('Initializing camera...');
@@ -113,14 +116,46 @@ const processFrame = async () => {
         matchFound.value = true;
         addLog(`Located: ${props.roomName}`);
       }
+      // Clear success banner timeout
       if (bannerTimeout) {
         window.clearTimeout(bannerTimeout);
         bannerTimeout = null;
+      }
+      // Hide wrong room indicator when correct room is found
+      wrongRoomDetected.value = false;
+      if (wrongRoomTimeout) {
+        window.clearTimeout(wrongRoomTimeout);
+        wrongRoomTimeout = null;
       }
     } else if (matchFound.value && !bannerTimeout) {
       bannerTimeout = window.setTimeout(() => {
         matchFound.value = false;
         bannerTimeout = null;
+      }, 500);
+    }
+
+    // Detect wrong room: tags detected but none match target
+    if (detections.length > 0 && !foundMatch) {
+      const firstDetection = detections[0];
+      const wrongId = String(firstDetection.id);
+      
+      if (!wrongRoomDetected.value) {
+        wrongRoomDetected.value = true;
+        detectedRoomId.value = wrongId;
+        addLog(`Wrong room detected: ID ${wrongId}`);
+      } else if (detectedRoomId.value !== wrongId) {
+        detectedRoomId.value = wrongId;
+      }
+      
+      if (wrongRoomTimeout) {
+        window.clearTimeout(wrongRoomTimeout);
+        wrongRoomTimeout = null;
+      }
+    } else if (wrongRoomDetected.value && !wrongRoomTimeout) {
+      wrongRoomTimeout = window.setTimeout(() => {
+        wrongRoomDetected.value = false;
+        detectedRoomId.value = null;
+        wrongRoomTimeout = null;
       }, 500);
     }
 
@@ -222,6 +257,7 @@ onUnmounted(() => {
   if (animationId) cancelAnimationFrame(animationId);
   if (closeTimeout) window.clearTimeout(closeTimeout);
   if (bannerTimeout) window.clearTimeout(bannerTimeout);
+  if (wrongRoomTimeout) window.clearTimeout(wrongRoomTimeout);
   if (video.value && video.value.srcObject) {
     const stream = video.value.srcObject as MediaStream;
     stream.getTracks().forEach(track => track.stop());
@@ -298,14 +334,23 @@ onUnmounted(() => {
         <div v-if="matchFound" class="success-banner">
           <div class="banner-content">
             <div class="success-dot"></div>
-            <span>{{ i18n.t('ui.located') }}: <strong>{{ roomName }}</strong></span>
+            <span>{{ i18n.t('ui.located') }} <strong>{{ roomName }}</strong></span>
+          </div>
+        </div>
+      </Transition>
+
+      <Transition name="slide-up">
+        <div v-if="wrongRoomDetected" class="warning-banner">
+          <div class="banner-content">
+            <div class="warning-dot"></div>
+            <span>{{ i18n.t('ui.wrong_room', { id: detectedRoomId || '?' }) }}</span>
           </div>
         </div>
       </Transition>
     </div>
 
-    <div class="locator-footer" v-if="!matchFound && !error && !isLoading">
-      <div class="scan-hint">
+    <div class="locator-footer">
+      <div class="scan-hint" v-show="!matchFound && !error && !isLoading">
         <Camera class="hint-icon" />
         <span>{{ i18n.t('ui.point_camera_hint') }}</span>
       </div>
@@ -601,11 +646,16 @@ onUnmounted(() => {
 }
 
 .locator-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 2rem;
   background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
   display: flex;
   justify-content: center;
   z-index: 10;
+  pointer-events: none;
 }
 
 .scan-hint {
@@ -617,6 +667,7 @@ onUnmounted(() => {
   padding: 0.75rem 1.25rem;
   border-radius: 9999px;
   font-size: 0.9rem;
+  pointer-events: auto;
 }
 
 .hint-icon {
@@ -632,5 +683,36 @@ onUnmounted(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
+}
+
+.warning-banner {
+  position: absolute;
+  top: 60%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 1.2rem 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  z-index: 50;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.warning-banner .banner-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+  font-size: 1.25rem;
+  white-space: nowrap;
+}
+
+.warning-dot {
+  width: 8px;
+  height: 8px;
+  background: #fbbf24;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #fbbf24;
 }
 </style>
