@@ -12,7 +12,7 @@ import {
 import { type Room, buildingData } from '../../data/building';
 import { useBookmarksStore } from '../../stores/bookmarks';
 import { useI18nStore } from '../../stores/i18n';
-import { X, Bookmark, ScanSearch, Video, Map, ArrowDownToDot, ArrowUpFromDot, ArrowUpFromDotIcon} from 'lucide-vue-next';
+import { X, Bookmark, ScanSearch, Video, Map, ArrowDownToDot, ArrowUpFromDot} from 'lucide-vue-next';
 import PanoramaViewer from './PanoramaViewer.vue';
 import AprilTagLocator from './AprilTagLocator.vue';
 import { useRouter, useRoute } from 'vue-router';
