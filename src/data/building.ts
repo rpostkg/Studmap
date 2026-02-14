@@ -2,7 +2,7 @@ export interface Room {
     id: string;
     name: string;
     nickname?: string;
-    type: 'room' | 'auditorium' | 'lab' | 'office' | 'meeting' | 'staircase' | 'corridor' | 'spacer';
+    type: 'room' | 'auditorium' | 'lab' | 'office' | 'meeting' | 'staircase' | 'corridor' | 'spacer' | "entrance";
     x: number;
     y: number;
     width: number;
@@ -22,8 +22,8 @@ export const buildingData: Floor[] = [
         level: 1,
         rooms: [
             { id: 'c3', name: 'Corridor', type: 'corridor', width: 1, height: 20, x: 0, y: 0 },
-            { id: 'floor2_staircase1', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 5 },
-            { id: 'floor2_staircase2', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 14 },
+            { id: 'floor1_staircase1', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 5 },
+            { id: 'floor1_staircase2', name: 'STAIRS', type: 'staircase', width: 2, height: 1, x: 1, y: 14 },
             // Right side
             { id: '301', name: '301', type: 'room', width: 2, height: 3, x: 1, y: 0 },
             { id: '303', name: '303', type: 'room', width: 2, height: 2, x: 1, y: 3 },
@@ -38,7 +38,7 @@ export const buildingData: Floor[] = [
             { id: '300', name: '300', type: 'room', width: 2, height: 3, x: -2, y: 0 },
             { id: '302', name: '302', type: 'room', width: 2, height: 3, x: -2, y: 3 },
             { id: '304', name: '304', type: 'room', width: 2, height: 3, x: -2, y: 6 },
-            { id: 'entrance', name: 'Entrance', type: 'staircase', width: 2, height: 4, x: -2, y: 9 },
+            { id: 'building_entrance', name: 'Entrance', type: 'entrance', width: 2, height: 4, x: -2, y: 9 },
             { id: '308', name: '308', type: 'room', width: 2, height: 2.5, x: -2, y: 13 },
             { id: '310', name: '310', type: 'room', width: 2, height: 1, x: -2, y: 15.5 },
             { id: 'hall', name: 'General Hall', type: 'room', width: 2, height: 2, x: -2, y: 16.5 },

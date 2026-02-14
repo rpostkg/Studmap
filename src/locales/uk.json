@@ -43,7 +43,10 @@
         "preparing_worker": "Підготовка воркера...",
         "initializing_wasm": "Ініціалізація WASM (це може зайняти час)...",
         "camera_error_secure": "API камери не знайдено. Цей додаток потребує безпечного з'єднання (HTTPS або localhost) для доступу до камери.",
-        "camera_error_denied": "Доступ до камери відхилено: {message}"
+        "camera_error_denied": "Доступ до камери відхилено: {message}",
+        "wrong_room": "Невірний кабінет (виявлено: {id})",
+        "go_up_floor": "Вгору (Поверх {level})",
+        "go_down_floor": "Вниз (Поверх {level})"
     },
     "rooms": {
         "316": "316 (Комп'ютерний клас)",
@@ -57,7 +60,7 @@
         "floor2_staircase2": "Сходи",
         "floor3_staircase1": "Сходи",
         "floor3_staircase2": "Сходи",
-        "entrance": "Вхід",
+        "building_entrance": "Вхід",
         "hall": "Зал",
         "cafeteria1": "Кафе/Зал",
         "cafeteria2": "Кафе",

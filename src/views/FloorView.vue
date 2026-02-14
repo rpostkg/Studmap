@@ -106,6 +106,7 @@ const getRoomClass = (room: Room) => {
     else if (room.type === 'spacer') classes.push("spacer");
     else if (room.type === 'staircase') classes.push("staircase");
     else if (room.type === 'auditorium') classes.push("auditorium");
+    else if (room.type === 'entrance') classes.push("entrance");
     else classes.push("standard-room");
     
     // Highlight specific room from navigation
@@ -255,6 +256,19 @@ const getRoomClass = (room: Room) => {
 
 @media (prefers-color-scheme: dark) {
   .staircase {
+    background-color: #7c2d12;
+    color: #fdba74;
+  }
+}
+
+.entrance {
+  background-color: #ffedd5;
+  border-color: #fed7aa;
+  color: #c2410c;
+}
+
+@media (prefers-color-scheme: dark) {
+  .entrance {
     background-color: #7c2d12;
     color: #fdba74;
   }

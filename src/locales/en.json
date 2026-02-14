@@ -43,7 +43,10 @@
         "preparing_worker": "Preparing worker...",
         "initializing_wasm": "Initializing WASM (this may take a bit)...",
         "camera_error_secure": "Camera API (mediaDevices) not found. This app requires a Secure Context (HTTPS or localhost) to access the camera.",
-        "camera_error_denied": "Camera access denied: {message}"
+        "camera_error_denied": "Camera access denied: {message}",
+        "wrong_room": "Wrong room (detected: {id})",
+        "go_up_floor": "Go Up (Floor {level})",
+        "go_down_floor": "Go Down (Floor {level})"
     },
     "rooms": {
         "316": "316 (Computer Class)",
@@ -56,7 +59,7 @@
         "floor2_staircase2": "Stairs",
         "floor3_staircase1": "Stairs",
         "floor3_staircase2": "Stairs",
-        "entrance": "Entrance",
+        "building_entrance": "Entrance",
         "hall": "General hall",
         "cafeteria1": "Cafeteria/General hall",
         "cafeteria2": "Cafeteria",
