@@ -70,6 +70,40 @@ const navigateToFloor = () => {
     emit('close');
   }
 };
+
+const isStaircase = computed(() => props.room?.type === 'staircase');
+
+const canGoUp = computed(() => {
+  if (!roomFloor.value) return false;
+  const maxFloor = Math.max(...buildingData.map(f => f.level));
+  return roomFloor.value < maxFloor;
+});
+
+const canGoDown = computed(() => {
+  if (!roomFloor.value) return false;
+  const minFloor = Math.min(...buildingData.map(f => f.level));
+  return roomFloor.value > minFloor;
+});
+
+const goUpFloor = () => {
+  if (roomFloor.value !== null && canGoUp.value) {
+    router.push({ 
+      name: 'floor', 
+      params: { level: String(roomFloor.value + 1) }
+    });
+    emit('close');
+  }
+};
+
+const goDownFloor = () => {
+  if (roomFloor.value !== null && canGoDown.value) {
+    router.push({ 
+      name: 'floor', 
+      params: { level: String(roomFloor.value - 1) }
+    });
+    emit('close');
+  }
+};
 </script>
 
 <template>
@@ -90,7 +124,7 @@ const navigateToFloor = () => {
             </DialogClose>
           </div>
 
-          <div class="action-grid">
+          <div class="action-grid" v-if="!isStaircase">
             <button 
               class="action-btn"
               :class="{ 'is-active': isBookmarked }"
@@ -127,6 +161,24 @@ const navigateToFloor = () => {
             >
               <Map class="action-icon"/>
               <span class="action-label">{{ i18n.t('ui.show_on_map') }}</span>
+            </button>
+          </div>
+
+          <div class="action-grid staircase-nav" v-else>
+            <button 
+              v-if="canGoUp"
+              class="action-btn stair-btn"
+              @click="goUpFloor"
+            >
+              <span class="action-label">{{ i18n.t('ui.go_up_floor', { level: String((roomFloor || 0) + 1) }) }}</span>
+            </button>
+            
+            <button 
+              v-if="canGoDown"
+              class="action-btn stair-btn"
+              @click="goDownFloor"
+            >
+              <span class="action-label">{{ i18n.t('ui.go_down_floor', { level: String((roomFloor || 0) - 1) }) }}</span>
             </button>
           </div>
         </template>
