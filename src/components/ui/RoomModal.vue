@@ -82,7 +82,7 @@ const navigateToFloor = () => {
             <div class="room-info">
               <DialogTitle class="room-name">{{ getRoomName(room) }}</DialogTitle>
               <DialogDescription class="room-meta">
-                {{ room.nickname}} {{ i18n.t('ui.level') }} {{ room.id.charAt(0) }}
+                {{ room.nickname}} {{ i18n.t('ui.level') }} {{ roomFloor }}
               </DialogDescription>
             </div>
             <DialogClose class="close-btn">
@@ -104,7 +104,7 @@ const navigateToFloor = () => {
               class="action-btn"
               :disabled="!room.hasPanorama"
               :class="{ 'disabled': !room.hasPanorama }"
-              @click="showPanorama = true"
+              @click="emit('close'); showPanorama = true"
             >
               <Video class="action-icon"/>
               <span class="action-label">{{ i18n.t('ui.view_panorama') }}</span>
@@ -114,7 +114,7 @@ const navigateToFloor = () => {
               class="action-btn"
               :disabled="!room.hasTag"
               :class="{ 'disabled': !room.hasTag }"
-              @click="showLocator = true"
+              @click="emit('close'); showLocator = true"
             >
               <MapPin class="action-icon"/>
               <span class="action-label">{{ i18n.t('ui.locate') }}</span>
