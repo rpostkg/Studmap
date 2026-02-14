@@ -12,7 +12,7 @@ import {
 import { type Room, buildingData } from '../../data/building';
 import { useBookmarksStore } from '../../stores/bookmarks';
 import { useI18nStore } from '../../stores/i18n';
-import { X, Bookmark, MapPin, Video, Map } from 'lucide-vue-next';
+import { X, Bookmark, ScanSearch, Video, Map, ArrowDownToDot, ArrowUpFromDot, ArrowUpFromDotIcon} from 'lucide-vue-next';
 import PanoramaViewer from './PanoramaViewer.vue';
 import AprilTagLocator from './AprilTagLocator.vue';
 import { useRouter, useRoute } from 'vue-router';
@@ -150,7 +150,7 @@ const goDownFloor = () => {
               :class="{ 'disabled': !room.hasTag }"
               @click="emit('close'); showLocator = true"
             >
-              <MapPin class="action-icon"/>
+              <ScanSearch class="action-icon"/>
               <span class="action-label">{{ i18n.t('ui.locate') }}</span>
             </button>
             
@@ -170,6 +170,7 @@ const goDownFloor = () => {
               class="action-btn stair-btn"
               @click="goUpFloor"
             >
+              <ArrowUpFromDot class="action-icon"/>
               <span class="action-label">{{ i18n.t('ui.go_up_floor', { level: String((roomFloor || 0) + 1) }) }}</span>
             </button>
             
@@ -178,6 +179,7 @@ const goDownFloor = () => {
               class="action-btn stair-btn"
               @click="goDownFloor"
             >
+              <ArrowDownToDot class="action-icon"/>
               <span class="action-label">{{ i18n.t('ui.go_down_floor', { level: String((roomFloor || 0) - 1) }) }}</span>
             </button>
           </div>
