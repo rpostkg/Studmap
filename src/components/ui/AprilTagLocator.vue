@@ -180,7 +180,7 @@ const runTest = async () => {
   
   try {
     const img = new Image();
-    img.src = '/test_tag.png';
+    img.src = `${import.meta.env.BASE_URL}test_tag.png`;
     await new Promise((resolve, reject) => {
       img.onload = resolve;
       img.onerror = reject;
@@ -228,8 +228,8 @@ onMounted(async () => {
 
   try {
     loadingStatus.value = i18n.t('ui.preparing_worker');
-    addLog('Loading worker from /apriltag/apriltag.js');
-    worker = new Worker('/apriltag/apriltag.js', { type: 'module' });
+    addLog(`Loading worker from ${import.meta.env.BASE_URL}apriltag/apriltag.js`);
+    worker = new Worker(`${import.meta.env.BASE_URL}apriltag/apriltag.js`, { type: 'module' });
     
     worker.onerror = (e) => {
       addLog(`Worker error event: ${e.message}`);

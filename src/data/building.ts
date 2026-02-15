@@ -60,7 +60,7 @@ export const buildingData: Floor[] = [
             { id: '329', name: '329', type: 'room', width: 2, height: 2, x: 1, y: 15, hasTag: true },
             { id: '331', name: '331', type: 'room', width: 2, height: 3, x: 1, y: 17 },
             //Left side
-            { id: '312', name: '312', type: 'room', width: 2, height: 3, x: -2, y: 0, hasTag: true, hasPanorama: true, panoramaUrl: '/panoramas/312/pano.jpg' },
+            { id: '312', name: '312', type: 'room', width: 2, height: 3, x: -2, y: 0, hasTag: true, hasPanorama: true, panoramaUrl: `${import.meta.env.BASE_URL}panoramas/312/pano.jpg` },
             { id: '314', name: '314', type: 'room', width: 2, height: 2.5, x: -2, y: 3 },
             { id: '316', name: '316', type: 'room', width: 2, height: 3, x: -2, y: 5.5 },
             { id: '318', name: '318', type: 'room', width: 2, height: 2.5, x: -2, y: 8.5 },
