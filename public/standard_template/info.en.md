@@ -1,5 +1,9 @@
 # Room {roomName} Info
 
+**You can add your own notes here!**
+
+## Example:
+
 ## Schedule
 | Time | Subject | Group |
 |---|---|---|
@@ -12,8 +16,6 @@
 - WiFi: **Strong**
 - Outlets: **12**
 
-![Room Image](/test_tag.png)
-
 > Please keep the room clean!
 
-**You can add your own notes here!**
+
