@@ -36,7 +36,7 @@
         "about": "About",
         "version": "Version",
         "locating_room": "Locating {name}",
-        "scan_hint_id": "Scan the AprilTag for ID {id}",
+        "scan_hint_id": "Scan the tags located on/around doors",
         "point_camera_hint": "Point your camera at the tag",
         "initializing": "Initializing...",
         "connecting_camera": "Connecting camera...",
