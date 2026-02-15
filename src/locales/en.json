@@ -47,7 +47,7 @@
         "wrong_room": "Wrong room (detected: {id})",
         "go_up_floor": "Go Up (Floor {level})",
         "go_down_floor": "Go Down (Floor {level})",
-        "info": "Info",
+        "info": "Notes",
         "edit": "Edit",
         "close": "Close",
         "load_error": "Failed to load info",
