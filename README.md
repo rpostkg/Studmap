@@ -1,7 +1,8 @@
 ![Studmap logo](https://github.com/rpostkg/Studmap/blob/fe20921f096797c496ec97d3c2c5cbe9fc6e726b/public/pwa-192x192.png)
 # Studmap
+#### [Українська версія README знаходиться тут](README_UA.md)
 
-A vue webapp for navigating the maze that is this campus featuring some bells and whistles such as PWA support, panos and a possibly fancy way of finding a room indoors.
+A vue webapp for navigating the maze that is this campus, featuring some bells and whistles such as PWA support, panos and a possibly fancy way of finding a room indoors.
 
 ## Project Setup
 Nothing out of the ordinary.
@@ -19,6 +20,11 @@ npm run dev
 
 ```sh
 npm run build
+```
+
+### PWA support can be tested via preview config
+```sh
+npm run preview
 ```
 
 ### LICENSE
