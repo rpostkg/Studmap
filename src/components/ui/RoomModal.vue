@@ -12,9 +12,10 @@ import {
 import { type Room, buildingData } from '../../data/building';
 import { useBookmarksStore } from '../../stores/bookmarks';
 import { useI18nStore } from '../../stores/i18n';
-import { X, Bookmark, ScanSearch, Video, Map, ArrowDownToDot, ArrowUpFromDot} from 'lucide-vue-next';
+import { X, Bookmark, ScanSearch, Video, Map, ArrowDownToDot, ArrowUpFromDot, FileText } from 'lucide-vue-next';
 import PanoramaViewer from './PanoramaViewer.vue';
 import AprilTagLocator from './AprilTagLocator.vue';
+import RoomInfo from './RoomInfo.vue';
 import { useRouter, useRoute } from 'vue-router';
 
 const props = defineProps<{
@@ -32,6 +33,7 @@ const i18n = useI18nStore();
 const bookmarksStore = useBookmarksStore();
 const showPanorama = ref(false);
 const showLocator = ref(false);
+const showInfo = ref(false);
 
 const isBookmarked = computed(() => {
   if (!props.room) return false;
@@ -146,6 +148,14 @@ const goDownFloor = () => {
 
             <button 
               class="action-btn"
+              @click="emit('close'); showInfo = true"
+            >
+              <FileText class="action-icon"/>
+              <span class="action-label">{{ i18n.t('ui.info') }}</span>
+            </button>
+
+            <button 
+              class="action-btn"
               :disabled="!room.hasTag"
               :class="{ 'disabled': !room.hasTag }"
               @click="emit('close'); showLocator = true"
@@ -199,6 +209,13 @@ const goDownFloor = () => {
         :roomId="room.id" 
         :roomName="getRoomName(room)"
         @close="showLocator = false"
+      />
+
+      <RoomInfo
+        v-if="showInfo && room"
+        :roomId="room.id"
+        :roomName="getRoomName(room)"
+        @close="showInfo = false"
       />
     </DialogPortal>
   </DialogRoot>

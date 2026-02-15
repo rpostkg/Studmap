@@ -46,7 +46,18 @@
         "camera_error_denied": "Доступ до камери відхилено: {message}",
         "wrong_room": "Невірний кабінет (виявлено: {id})",
         "go_up_floor": "Вгору (Поверх {level})",
-        "go_down_floor": "Вниз (Поверх {level})"
+        "go_down_floor": "Вниз (Поверх {level})",
+        "info": "Нотатки",
+        "edit": "Редагувати",
+        "close": "Закрити",
+        "load_error": "Помилка завантаження",
+        "no_info_available": "Інформація відсутня.",
+        "loading": "Завантаження...",
+        "markdown_supported": "Підтримується Markdown",
+        "enter_notes": "Введіть ваші нотатки...",
+        "update_available": "Вміст на сервері змінився.",
+        "overwrite_with_server": "Оновити з сервера",
+        "keep_my_version": "Залишити мою версію"
     },
     "rooms": {
         "316": "316 (Комп'ютерний клас)",
