@@ -46,7 +46,18 @@
         "camera_error_denied": "Camera access denied: {message}",
         "wrong_room": "Wrong room (detected: {id})",
         "go_up_floor": "Go Up (Floor {level})",
-        "go_down_floor": "Go Down (Floor {level})"
+        "go_down_floor": "Go Down (Floor {level})",
+        "info": "Info",
+        "edit": "Edit",
+        "close": "Close",
+        "load_error": "Failed to load info",
+        "no_info_available": "No information available for this room.",
+        "loading": "Loading...",
+        "markdown_supported": "Markdown is supported",
+        "enter_notes": "Enter your notes here...",
+        "update_available": "Server content has changed since you last edited.",
+        "overwrite_with_server": "Overwrite with Server",
+        "keep_my_version": "Keep My Version"
     },
     "rooms": {
         "316": "316 (Computer Class)",
