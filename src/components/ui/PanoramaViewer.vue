@@ -3,7 +3,8 @@ import { onMounted, onUnmounted, ref } from 'vue';
 import { X } from 'lucide-vue-next';
 import 'pannellum/build/pannellum.css';
 import 'pannellum/build/pannellum.js';
-
+import { useI18nStore } from '../../stores/i18n';
+const i18n = useI18nStore();
 const props = defineProps<{
   url: string;
   roomName: string;
@@ -39,7 +40,7 @@ onUnmounted(() => {
 <template>
   <div class="panorama-overlay">
     <div class="panorama-header">
-        <h2 class="panorama-title">{{ roomName }} - 360° View</h2>
+        <h2 class="panorama-title">{{ roomName }} - {{ i18n.t('ui.panoui_header') }}</h2>
         <button @click="emit('close')" class="close-btn">
             <X class="close-icon" />
         </button>
