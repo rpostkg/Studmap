@@ -61,7 +61,14 @@
         "keep_my_version": "Keep My Version"
     },
     "rooms": {
+        "303": "303 (Medical Room)",
         "316": "316 (Computer Class)",
+        "321": "321 (Methodology Room)",
+        "326": "326 (Computer Class)",
+        "328": "328 (Faculty Room)",
+        "340": "340 (Academic Dept.)",
+        "347": "347 (Accounting/Academic Department)",
+        "349": "349 (Computer Class)",
         "s1_up": "Stairs",
         "s3_down": "Stairs",
         "s3_up": "Stairs",
