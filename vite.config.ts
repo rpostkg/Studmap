@@ -38,7 +38,8 @@ export default defineConfig({
     })
   ],
   server: {
-    allowedHosts: true
+    allowedHosts: true,
+    port: 9003
   },
   resolve: {
     alias: {
